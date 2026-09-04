@@ -36,6 +36,15 @@ const nav = [
     <meta name="theme-color" content="#0a0b0d" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Sekiya Institute" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content="https://sekiyalab.github.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preload" href="/fonts/newsreader-display-300.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/newsreader-text-400.woff2" as="font" type="font/woff2" crossorigin />

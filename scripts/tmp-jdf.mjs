@@ -1,0 +1,16 @@
+import { chromium } from 'playwright';
+const browser = await chromium.launch();
+const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 2 });
+await page.goto('http://localhost:8791/', { waitUntil: 'networkidle' });
+await page.waitForTimeout(1500);
+await page.screenshot({ path: 'shots/jdf-hero.png' });
+await page.evaluate(() => document.querySelector('#research').scrollIntoView());
+await page.waitForTimeout(900);
+await page.screenshot({ path: 'shots/jdf-research.png' });
+await page.evaluate(() => document.querySelector('#findings').scrollIntoView());
+await page.waitForTimeout(900);
+await page.screenshot({ path: 'shots/jdf-findings.png' });
+await page.evaluate(() => document.querySelector('#about').scrollIntoView());
+await page.waitForTimeout(900);
+await page.screenshot({ path: 'shots/jdf-about.png' });
+await browser.close();
