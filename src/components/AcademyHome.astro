@@ -1,0 +1,93 @@
+---
+import Base from '../layouts/Base.astro';
+import AcademyMap from './AcademyMap.astro';
+---
+
+<Base
+  title="Academy — Sekiya"
+  description="A cabinet of visual technical notebooks: open a mechanism and take it apart."
+  objectCount={2}
+>
+  <header class="academy-hero">
+    <div class="shell academy-hero__copy">
+      <p class="eyebrow">Sekiya Academy / curiosity has no prerequisites</p>
+      <h1>Open a mechanism.<br /><em>See what moves.</em></h1>
+      <p>
+        A cabinet of ideas explained until they feel obvious. No curriculum, no badges,
+        no obligation to finish anything.
+      </p>
+    </div>
+    <AcademyMap />
+  </header>
+
+  <section class="academy-room shell" aria-labelledby="open-rooms">
+    <div class="academy-room__head">
+      <p class="eyebrow">Rooms currently open</p>
+      <h2 id="open-rooms">Two ways into the machine.</h2>
+      <p>Recovered from the GPU engine’s real implementation notes, then rebuilt as visual explanations.</p>
+    </div>
+
+    <div class="notebook-grid">
+      <a class="notebook notebook--gpu" href="/academy/gpu-command-journey/">
+        <div class="notebook__visual" aria-hidden="true">
+          <div class="notebook__chip">
+            {Array.from({ length: 35 }, (_, i) => <i style={`--i:${i}`}></i>)}
+          </div>
+          <span class="notebook__beam"></span>
+        </div>
+        <span class="notebook__meta">GPU / Trace / Interactive</span>
+        <h3>One command’s journey through the GPU</h3>
+        <p>Buffers, binding, encoding, dispatch, and why the CPU cannot simply reach in.</p>
+        <span class="notebook__enter">Enter room <b aria-hidden="true">↗</b></span>
+      </a>
+
+      <a class="notebook notebook--ping" href="/academy/ping-pong-buffers/">
+        <div class="notebook__visual" aria-hidden="true">
+          <div class="notebook__buffer">A</div>
+          <span></span>
+          <div class="notebook__buffer">B</div>
+        </div>
+        <span class="notebook__meta">Simulation / Visual / From scratch</span>
+        <h3>Why simulations need two futures</h3>
+        <p>Read here, write there, swap the names. One tiny pattern prevents a world from tearing itself apart.</p>
+        <span class="notebook__enter">Enter room <b aria-hidden="true">↗</b></span>
+      </a>
+    </div>
+  </section>
+
+  <section class="academy-cabinet">
+    <div class="shell academy-cabinet__grid">
+      <div>
+        <p class="eyebrow">Recovered shelf / GPU simulation engine</p>
+        <h2>Thirteen useful things survived.</h2>
+        <p class="academy-cabinet__lede">
+          They began as practical notes written while building a GPU-first simulation engine.
+          The old identity stays in history. The mechanisms are still worth opening.
+        </p>
+      </div>
+      <ol class="academy-index">
+        <li><span>01</span><strong>Atomics and race conditions</strong><em>source recovered</em></li>
+        <li class="is-open"><span>02</span><strong>WebGPU compute mental model</strong><em>open</em></li>
+        <li class="is-open"><span>03</span><strong>Ping-pong buffers</strong><em>open</em></li>
+        <li><span>04</span><strong>Buffer layouts and alignment</strong><em>source recovered</em></li>
+        <li><span>05</span><strong>Dispatch and thread organisation</strong><em>part of room 01</em></li>
+        <li><span>06</span><strong>Determinism in simulation</strong><em>source recovered</em></li>
+        <li><span>07</span><strong>Parity tests and golden fixtures</strong><em>source recovered</em></li>
+        <li><span>08</span><strong>Epsilon or strict equality?</strong><em>source recovered</em></li>
+        <li><span>09</span><strong>Cascade models and network diffusion</strong><em>source recovered</em></li>
+        <li><span>10</span><strong>Directed and bidirectional flow</strong><em>source recovered</em></li>
+        <li><span>11</span><strong>Explicit interfaces over hidden state</strong><em>source recovered</em></li>
+        <li><span>12</span><strong>Writing implementation briefs</strong><em>source retained</em></li>
+        <li><span>13</span><strong>Reading line reviews</strong><em>source retained</em></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="academy-principle shell">
+    <p class="eyebrow">The only rule</p>
+    <blockquote>
+      If the central idea cannot be explained clearly, we probably do not understand it yet.
+    </blockquote>
+    <p>Simple first. Arbitrarily deep afterwards.</p>
+  </section>
+</Base>

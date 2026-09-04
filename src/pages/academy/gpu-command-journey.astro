@@ -1,0 +1,97 @@
+---
+import Base from '../../layouts/Base.astro';
+import GPUJourney from '../../components/GPUJourney.astro';
+---
+
+<Base
+  title="One command’s journey through the GPU — Sekiya Academy"
+  description="An intuitive and technical trace through buffers, binding, command encoding, dispatch, and readback."
+>
+  <header class="lesson-hero lesson-hero--gpu shell">
+    <a class="lesson-back" href="/academy/">← Academy field</a>
+    <p class="eyebrow">Room 01 / GPU execution / recovered engine notes</p>
+    <h1>One command’s journey through the GPU.</h1>
+    <p class="lesson-hero__lede">
+      The CPU describes work. The GPU performs thousands of tiny copies of that work.
+      The interesting machinery is everything that happens between those two sentences.
+    </p>
+    <div class="lesson-modes" aria-label="Learning modes used">
+      <span>Intuitive</span><span>Visual</span><span>Trace</span><span>Technical</span><span>Code</span>
+    </div>
+  </header>
+
+  <section class="lesson-layer lesson-layer--visual">
+    <div class="shell">
+      <div class="lesson-label"><span>01</span> Trace</div>
+      <h2>Follow the operation.</h2>
+      <p class="lesson-intro">Select each stage. Notice how little of the actual calculation belongs to the CPU.</p>
+      <GPUJourney />
+    </div>
+  </section>
+
+  <section class="lesson-layer shell">
+    <div class="lesson-copy">
+      <div class="lesson-label"><span>02</span> Intuitive</div>
+      <h2>A kitchen with a locked pass.</h2>
+      <p class="lesson-lead">
+        Imagine a kitchen that can prepare ten thousand identical plates at once. You cannot walk in
+        and move ingredients around while it works. You arrange labelled trays at the pass, write one
+        exact recipe, and ring the bell.
+      </p>
+      <p>
+        Buffers are the trays. A bind group says which tray means what. A compute pipeline combines
+        that wiring with the recipe. A command encoder writes the order. Submission rings the bell.
+      </p>
+      <aside class="lesson-warning">
+        <span>The common mistake</span>
+        Building new trays every tick. Persistent GPU resources should normally be allocated during
+        setup, not recreated inside the simulation loop.
+      </aside>
+    </div>
+  </section>
+
+  <section class="lesson-layer lesson-layer--technical">
+    <div class="shell lesson-split">
+      <div>
+        <div class="lesson-label"><span>03</span> Technical</div>
+        <h2>The five objects that matter.</h2>
+      </div>
+      <ol class="mechanism-list">
+        <li><b>GPUBuffer</b><p>Typed bytes visible to GPU work. Usage flags declare what may happen to them.</p></li>
+        <li><b>GPUBindGroup</b><p>The concrete resources attached to shader binding slots.</p></li>
+        <li><b>GPUComputePipeline</b><p>Compiled WGSL plus its resource interface.</p></li>
+        <li><b>GPUCommandEncoder</b><p>A recorder for passes and copies. Recording is not execution.</p></li>
+        <li><b>GPUQueue</b><p>The ordered submission boundary between prepared commands and device work.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="lesson-layer shell">
+    <div class="lesson-copy">
+      <div class="lesson-label"><span>04</span> Code</div>
+      <h2>One-dimensional dispatch.</h2>
+      <p>For 1,000 items and workgroups of 64, dispatch 16 groups. The final 24 invocations are real, but have no item.</p>
+      <pre><code>{`@compute @workgroup_size(64)
+fn update(@builtin(global_invocation_id) id: vec3<u32>) {
+  if (id.x >= config.item_count) {
+    return; // overshoot guard
+  }
+
+  output[id.x] = transform(input[id.x]);
+}
+
+pass.dispatchWorkgroups(Math.ceil(1000 / 64));`}</code></pre>
+      <p class="lesson-check"><strong>Reconstruction check:</strong> Why is the bounds test inside the shader even when the CPU already knows the item count?</p>
+    </div>
+  </section>
+
+  <section class="lesson-provenance shell">
+    <p class="eyebrow">Evidence boundary</p>
+    <p>
+      Recovered from implementation notes for a WebGPU simulation engine: its compute mental model,
+      dispatch organisation, persistent-resource rule, and overshoot guard. This notebook explains
+      the mechanism; it does not publish or link the private engine.
+    </p>
+    <p><strong>Limits:</strong> Browser WebGPU implementations schedule workgroups independently. This explanation does not promise a specific execution order, performance gain, or cross-device floating-point identity.</p>
+  </section>
+</Base>

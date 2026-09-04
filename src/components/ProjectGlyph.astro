@@ -1,0 +1,91 @@
+---
+interface Props {
+  signature: string;
+  title: string;
+}
+
+const { signature, title } = Astro.props;
+---
+
+<div class="project-glyph" data-signature={signature} aria-hidden="true">
+  <svg viewBox="0 0 480 220" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id={`beam-${signature}`} x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="currentColor" stop-opacity=".08" />
+        <stop offset=".52" stop-color="currentColor" stop-opacity=".82" />
+        <stop offset="1" stop-color="currentColor" stop-opacity=".02" />
+      </linearGradient>
+    </defs>
+    {signature === 'clock' && (
+      <>
+        <g class="glyph-grid">
+          {Array.from({ length: 7 }, (_, i) => <line x1={48 + i * 62} y1="24" x2={48 + i * 62} y2="196" />)}
+        </g>
+        <path class="glyph-primary glyph-dash" d="M18 154 C82 154 90 72 148 72 S226 132 278 96 S350 38 462 38" />
+        <path class="glyph-secondary" d="M18 176 C96 176 112 130 174 130 S262 172 326 112 S402 82 462 82" />
+        <g class="glyph-points">
+          <circle cx="148" cy="72" r="4" /><circle cx="278" cy="96" r="4" /><circle cx="326" cy="112" r="4" />
+        </g>
+      </>
+    )}
+    {signature === 'lob' && (
+      <>
+        <g class="glyph-bars glyph-bars--left">
+          {Array.from({ length: 6 }, (_, i) => <rect x={32 + i * 27} y={108 - i * 10} width="18" height={54 + i * 10} />)}
+        </g>
+        <g class="glyph-bars glyph-bars--right">
+          {Array.from({ length: 6 }, (_, i) => <rect x={286 + i * 27} y={58 + i * 10} width="18" height={54 + (5 - i) * 10} />)}
+        </g>
+        <path class="glyph-primary" d="M18 190 L118 142 L212 111 L264 111 L354 76 L462 26" />
+        <line class="glyph-axis" x1="240" y1="18" x2="240" y2="202" />
+      </>
+    )}
+    {signature === 'trace' && (
+      <>
+        <path class="glyph-secondary glyph-dash" d="M18 44 H112 V92 H194 V46 H278 V154 H366 V96 H462" />
+        <path class="glyph-primary" d="M18 174 H76 V126 H164 V178 H250 V112 H332 V54 H462" />
+        <g class="glyph-points">
+          <circle cx="76" cy="126" r="5" /><circle cx="164" cy="178" r="5" /><circle cx="250" cy="112" r="5" /><circle cx="332" cy="54" r="5" />
+        </g>
+      </>
+    )}
+    {signature === 'release' && (
+      <>
+        <path class="glyph-secondary" d="M24 56 C114 18 154 104 240 66 S356 24 456 58" />
+        <path class="glyph-primary" d="M24 160 C114 122 154 208 240 170 S356 128 456 162" />
+        <g class="glyph-gates">
+          <line x1="126" y1="22" x2="126" y2="198" /><line x1="354" y1="22" x2="354" y2="198" />
+        </g>
+        <path class="glyph-bridge glyph-dash" d="M126 56 C210 74 260 146 354 162" />
+      </>
+    )}
+    {signature === 'diagnosis' && (
+      <>
+        <path class="glyph-area" d="M10 172 C86 150 108 42 192 72 S282 198 350 118 S408 70 470 32 L470 220 L10 220 Z" />
+        <path class="glyph-primary" d="M10 172 C86 150 108 42 192 72 S282 198 350 118 S408 70 470 32" />
+        <path class="glyph-secondary glyph-dash" d="M10 188 C86 176 132 102 200 112 S298 184 356 146 S416 118 470 90" />
+      </>
+    )}
+    {(signature === 'gpu' || signature === 'cascade') && (
+      <>
+        <g class="glyph-cells">
+          {Array.from({ length: 48 }, (_, i) => (
+            <rect x={22 + (i % 12) * 37} y={22 + Math.floor(i / 12) * 47} width="25" height="31" style={`--cell:${i}`} />
+          ))}
+        </g>
+        <path class="glyph-primary glyph-dash" d="M10 178 C88 30 162 204 240 82 S382 182 470 30" />
+      </>
+    )}
+    {!['clock', 'lob', 'trace', 'release', 'diagnosis', 'gpu', 'cascade'].includes(signature) && (
+      <>
+        <g class="glyph-orbits">
+          <ellipse cx="240" cy="110" rx="194" ry="67" />
+          <ellipse cx="240" cy="110" rx="128" ry="96" transform="rotate(-18 240 110)" />
+          <ellipse cx="240" cy="110" rx="72" ry="186" transform="rotate(64 240 110)" />
+        </g>
+        <path class="glyph-primary glyph-dash" d="M24 154 C104 30 174 188 250 76 S388 164 458 54" />
+      </>
+    )}
+  </svg>
+  <span>{title} / live abstraction</span>
+</div>

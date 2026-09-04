@@ -30,7 +30,19 @@ const browser = await chromium.launch();
 }
 
 /* ---------- 2. axe on key surfaces ---------- */
-const axePages = ['/', '/f/audit-retrieval/', '/s/deep-lob/', '/i/trace-npm/', '/study/', '/institute/', '/journal/', '/q/npm-install/'];
+const axePages = [
+  '/',
+  '/academy/',
+  '/academy/gpu-command-journey/',
+  '/academy/ping-pong-buffers/',
+  '/f/audit-retrieval/',
+  '/s/deep-lob/',
+  '/i/trace-npm/',
+  '/study/',
+  '/institute/',
+  '/journal/',
+  '/q/npm-install/',
+];
 const axeCtx = await browser.newContext();
 for (const p of axePages) {
   const page = await axeCtx.newPage();
@@ -92,6 +104,28 @@ for (const p of axePages) {
   if (nonPublicLinks === 0 && named >= 14) pass(`work index — ${named} named entries; non-public entries are not linked`);
   else fail(`work index — non-public links=${nonPublicLinks}, named=${named}`);
   await page.close();
+}
+
+/* ---------- 6. reduced motion: procedural systems settle to static views ---------- */
+{
+  const context = await browser.newContext({ reducedMotion: 'reduce' });
+  const page = await context.newPage();
+  await page.goto(base + '/', { waitUntil: 'networkidle' });
+  const state = await page.evaluate(() => {
+    const bloom = document.querySelector('.signal-field__bloom');
+    const bloomStyle = bloom ? getComputedStyle(bloom) : null;
+    return {
+      media: matchMedia('(prefers-reduced-motion: reduce)').matches,
+      bloomAnimation: bloomStyle?.animationName ?? 'missing',
+      smoothScroll: getComputedStyle(document.documentElement).scrollBehavior,
+    };
+  });
+  if (state.media && state.bloomAnimation === 'none' && state.smoothScroll === 'auto') {
+    pass('reduced motion — canvas drift, CSS animation, and smooth scrolling are disabled');
+  } else {
+    fail(`reduced motion — ${JSON.stringify(state)}`);
+  }
+  await context.close();
 }
 
 await browser.close();

@@ -1,0 +1,88 @@
+---
+import Base from '../../layouts/Base.astro';
+import PingPongLab from '../../components/PingPongLab.astro';
+---
+
+<Base
+  title="Why simulations need two futures — Sekiya Academy"
+  description="A visual explanation of ping-pong buffers and synchronous state updates."
+>
+  <header class="lesson-hero lesson-hero--ping shell">
+    <a class="lesson-back" href="/academy/">← Academy field</a>
+    <p class="eyebrow">Room 02 / Simulation state / recovered engine notes</p>
+    <h1>Why simulations need two futures.</h1>
+    <p class="lesson-hero__lede">
+      Reading and writing the same world at the same time quietly changes the rules.
+      The fix is two buffers and a name swap.
+    </p>
+    <div class="lesson-modes" aria-label="Learning modes used">
+      <span>Intuitive</span><span>Visual</span><span>Experiment</span><span>From scratch</span>
+    </div>
+  </header>
+
+  <section class="lesson-layer lesson-layer--visual">
+    <div class="shell">
+      <div class="lesson-label"><span>01</span> Experiment</div>
+      <h2>Read A. Write B. Swap.</h2>
+      <p class="lesson-intro">Run a tick. The bytes do not move back; the roles do.</p>
+      <PingPongLab />
+    </div>
+  </section>
+
+  <section class="lesson-layer shell">
+    <div class="lesson-copy">
+      <div class="lesson-label"><span>02</span> Intuitive</div>
+      <h2>Do not erase the evidence while you still need it.</h2>
+      <p class="lesson-lead">
+        You are calculating tomorrow’s city from today’s city. Halfway through, you overwrite one
+        neighbourhood with tomorrow. The next neighbourhood now sees a mixture of today and tomorrow.
+        Your update order has become part of the model by accident.
+      </p>
+      <p>
+        Keep today immutable for the whole tick. Every cell reads from A and writes its result to B.
+        After all cells finish, B becomes the new present. On the next tick, read B and write A.
+      </p>
+      <div class="equation-strip" aria-label="State transition">
+        <span>S<sub>t+1</sub></span><b>=</b><span>F(S<sub>t</sub>)</span>
+        <i>all outputs see the same S<sub>t</sub></i>
+      </div>
+    </div>
+  </section>
+
+  <section class="lesson-layer lesson-layer--technical">
+    <div class="shell lesson-split">
+      <div>
+        <div class="lesson-label"><span>03</span> Technical</div>
+        <h2>The stale-readback trap.</h2>
+      </div>
+      <div class="lesson-copy">
+        <p>
+          A renderer or test that always reads buffer B works on odd ticks and shows stale state on even
+          ticks. Fixed buffer names leak an implementation detail that changes every dispatch.
+        </p>
+        <p>
+          Expose a role-aware method such as <code>getCurrentState()</code>. The caller asks for the state
+          most recently produced; the simulation resolves whether that is A or B.
+        </p>
+        <pre><code>{`const input = readRole === "A" ? stateA : stateB;
+const output = readRole === "A" ? stateB : stateA;
+
+dispatch(input, output);
+readRole = readRole === "A" ? "B" : "A";
+
+// The current output is now the same buffer as readRole.
+return readRole === "A" ? stateA : stateB;`}</code></pre>
+        <p class="lesson-check"><strong>Reconstruction check:</strong> After an A→B tick, the role flips to B. Which buffer must the renderer display, and why?</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="lesson-provenance shell">
+    <p class="eyebrow">Evidence boundary</p>
+    <p>
+      Recovered from the simulation engine’s ping-pong-buffer implementation notes and its documented
+      stale-readback failure mode. The visual uses a small illustrative grid, not research output.
+    </p>
+    <p><strong>Limits:</strong> Double buffering preserves synchronous update semantics; it does not by itself make a simulation deterministic, race-free, or numerically stable.</p>
+  </section>
+</Base>

@@ -2,6 +2,7 @@
 import { ClientRouter } from 'astro:transitions';
 import '../styles/tokens.css';
 import '../styles/base.css';
+import '../styles/night.css';
 import 'katex/dist/katex.min.css';
 
 interface Props {
@@ -27,7 +28,7 @@ const year = new Date().getUTCFullYear();
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0a0b0d" />
+    <meta name="theme-color" content="#030408" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
@@ -57,7 +58,7 @@ const year = new Date().getUTCFullYear();
             [
               { href: '/#work', label: 'Work' },
               { href: '/#questions', label: 'Questions' },
-              { href: '/study/', label: 'Notebook' },
+              { href: '/academy/', label: 'Academy' },
               { href: '/institute/', label: 'About' },
             ].map((item) => (
               <a

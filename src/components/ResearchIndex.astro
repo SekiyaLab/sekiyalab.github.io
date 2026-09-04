@@ -1,5 +1,6 @@
 ---
 import { areas, research } from '../data/research';
+import ProjectGlyph from './ProjectGlyph.astro';
 
 const counts = Object.fromEntries(
   areas.map((area) => [area.code, research.filter((item) => item.area === area.code).length]),
@@ -10,7 +11,7 @@ const counts = Object.fromEntries(
   <div class="research-index__head">
     <div>
       <p class="eyebrow">The work</p>
-      <h2>Named here. Linked when public.</h2>
+      <h2>Named here. Linked when the signal is public.</h2>
     </div>
     <p>
       Some work is still private. It belongs in the map anyway.
@@ -29,7 +30,10 @@ const counts = Object.fromEntries(
 
   <ol class="work-grid">
     {research.map((item, index) => (
-      <li class="work-card" data-work-area={item.area}>
+      <li class:list={['work-card', `work-card--${item.area}`, `work-card--${item.signature}`]} data-work-area={item.area}>
+        <div class="work-card__visual">
+          <ProjectGlyph signature={item.signature} title={item.title} />
+        </div>
         <span class="work-card__number">{String(index + 1).padStart(2, '0')}</span>
         <div class="work-card__meta">
           <span>{item.kind}</span>
@@ -44,6 +48,7 @@ const counts = Object.fromEntries(
           {item.href ? <a href={item.href} target="_blank" rel="noreferrer">{item.title}<span aria-hidden="true"> ↗</span></a> : item.title}
         </h3>
         <p>{item.summary}</p>
+        <span class="work-card__trace" aria-hidden="true"></span>
       </li>
     ))}
   </ol>

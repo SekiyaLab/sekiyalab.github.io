@@ -14,30 +14,35 @@ const countFor = (code: (typeof areas)[number]['code']) => research.filter((item
   description="Sekiya is an independent place for computer science and computational experimentation."
   objectCount={research.length}
 >
-  <section class="home-hero">
+  <section class="home-hero" data-home-hero>
+    <SignalField />
     <div class="shell home-hero__grid">
       <div class="home-hero__copy">
-        <p class="eyebrow">Sekiya / independent work</p>
-        <h1>Systems get more interesting once they start <em>moving.</em></h1>
+        <p class="eyebrow">Sekiya / live system 01</p>
+        <h1>Look closer.<br />Things are already <em>moving.</em></h1>
         <p class="home-hero__lede">
-          Sekiya is a place for computer science and computational experimentation: models,
-          instruments, simulations, and the occasional thing that is difficult to classify.
+          An independent place for models, machines, simulations, and the occasional thing
+          that refuses to stay classified.
         </p>
         <p class="home-hero__aside">Mostly, it is a way of finding things out.</p>
         <div class="home-hero__actions">
-          <a class="button button--bright" href="#work">Explore the work <span aria-hidden="true">↓</span></a>
-          <a class="button button--quiet" href="/institute/">About Sekiya <span aria-hidden="true">→</span></a>
+          <a class="button button--bright" href="#work">Enter the index <span aria-hidden="true">↓</span></a>
+          <a class="button button--quiet" href="/institute/">Why this exists <span aria-hidden="true">→</span></a>
         </div>
       </div>
-      <SignalField />
+      <div class="home-hero__telemetry" aria-hidden="true">
+        <span>field / active</span>
+        <span>cursor / perturb</span>
+        <span>scroll / refract</span>
+      </div>
     </div>
   </section>
 
   <section class="home-section shell" id="areas" aria-labelledby="areas-heading">
     <div class="section-heading">
-      <p class="eyebrow">Ways in</p>
-      <h2 id="areas-heading">Four ways in. No departments.</h2>
-      <p>Loose directions for work that tends to find its own route.</p>
+      <p class="eyebrow">Ways in / four frequencies</p>
+      <h2 id="areas-heading">Four frequencies. No departments.</h2>
+      <p>Different ways of following a system until it starts saying something interesting.</p>
     </div>
 
     <div class="area-grid">
@@ -49,7 +54,7 @@ const countFor = (code: (typeof areas)[number]['code']) => research.filter((item
           </div>
           <h3>{area.label}</h3>
           <p>{area.description}</p>
-          <a href="#work" data-area-link={area.code}>See the work <span aria-hidden="true">↓</span></a>
+          <a href="#work" data-area-link={area.code}>Tune in <span aria-hidden="true">↓</span></a>
         </article>
       ))}
     </div>
@@ -58,8 +63,8 @@ const countFor = (code: (typeof areas)[number]['code']) => research.filter((item
   <section class="home-section home-section--tint" id="questions" aria-labelledby="questions-heading">
     <div class="shell question-section">
       <div class="section-heading">
-        <p class="eyebrow">Questions</p>
-        <h2 id="questions-heading">A few questions worth keeping open.</h2>
+        <p class="eyebrow">Open circuits</p>
+        <h2 id="questions-heading">Questions with a little voltage left in them.</h2>
       </div>
       <ol class="question-strip">
         {questions.map((question, index) => (
@@ -82,11 +87,11 @@ const countFor = (code: (typeof areas)[number]['code']) => research.filter((item
   <section class="home-section shell home-outro" aria-label="Explore Sekiya">
     <p class="eyebrow">Elsewhere in Sekiya</p>
     <div>
-      <h2>More to pull apart.</h2>
-      <p>There are notebooks, field notes, and the full public record—when you feel like following a thread.</p>
+      <h2>There is more under the surface.</h2>
+      <p>Notes, half-lit explanations, and the public record—if you feel like following a signal.</p>
     </div>
     <div class="home-outro__links">
-      <a href="/study/">The notebook shelf <span aria-hidden="true">→</span></a>
+      <a href="/academy/">Enter the Academy <span aria-hidden="true">→</span></a>
       <a href="/journal/">Notes &amp; transmissions <span aria-hidden="true">→</span></a>
       <a href="https://github.com/SekiyaLab" target="_blank" rel="noreferrer">SekiyaLab on GitHub <span aria-hidden="true">↗</span></a>
     </div>

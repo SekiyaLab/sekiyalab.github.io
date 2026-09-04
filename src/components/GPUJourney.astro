@@ -1,0 +1,59 @@
+<div class="gpu-journey" data-gpu-journey>
+  <div class="gpu-journey__stage" aria-live="polite">
+    <div class="gpu-journey__cpu">
+      <span>CPU</span>
+      <strong data-gpu-cpu>Describe the work</strong>
+    </div>
+    <div class="gpu-journey__bus">
+      <i></i><i></i><i></i><i></i>
+    </div>
+    <div class="gpu-journey__gpu">
+      <span>GPU</span>
+      <div class="gpu-journey__workers">
+        {Array.from({ length: 36 }, (_, index) => <i style={`--i:${index}`}></i>)}
+      </div>
+      <strong data-gpu-gpu>Workers are waiting</strong>
+    </div>
+  </div>
+  <div class="gpu-journey__controls" role="group" aria-label="Follow a WebGPU operation">
+    <button type="button" data-gpu-step="0" aria-pressed="true">01 / buffers</button>
+    <button type="button" data-gpu-step="1" aria-pressed="false">02 / bind</button>
+    <button type="button" data-gpu-step="2" aria-pressed="false">03 / encode</button>
+    <button type="button" data-gpu-step="3" aria-pressed="false">04 / dispatch</button>
+    <button type="button" data-gpu-step="4" aria-pressed="false">05 / read</button>
+  </div>
+  <p data-gpu-copy>
+    Put data in buffers. The CPU prepares memory the GPU can see; it does not calculate every result itself.
+  </p>
+</div>
+
+<script>
+  const stages = [
+    ['Allocate stable memory', 'Workers are waiting', 'Put data in buffers. The CPU prepares memory the GPU can see; it does not calculate every result itself.'],
+    ['Connect resources', 'Workers know where data lives', 'A bind group is a wiring diagram: this shader input reads this buffer, and that output writes there.'],
+    ['Record commands', 'Nothing has run yet', 'Encoding describes a future operation. It is a command list, not immediate execution.'],
+    ['Submit the dispatch', 'Many workers run one rule', 'The queue receives the command buffer. Workgroups fan out; each invocation uses its ID to find its piece of the problem.'],
+    ['Request a copy back', 'Result remains GPU-side', 'Reading back is explicit and comparatively expensive. Keep data on the GPU when the next operation can consume it there.'],
+  ];
+
+  const bootGpuJourney = () => {
+    const root = document.querySelector<HTMLElement>('[data-gpu-journey]:not([data-ready])');
+    if (!root) return;
+    root.dataset.ready = 'true';
+    const buttons = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-gpu-step]'));
+    const cpu = root.querySelector<HTMLElement>('[data-gpu-cpu]');
+    const gpu = root.querySelector<HTMLElement>('[data-gpu-gpu]');
+    const copy = root.querySelector<HTMLElement>('[data-gpu-copy]');
+    const apply = (step: number) => {
+      root.dataset.activeStep = String(step);
+      buttons.forEach((button, index) => button.setAttribute('aria-pressed', String(index === step)));
+      if (cpu) cpu.textContent = stages[step][0];
+      if (gpu) gpu.textContent = stages[step][1];
+      if (copy) copy.textContent = stages[step][2];
+    };
+    buttons.forEach((button) => button.addEventListener('click', () => apply(Number(button.dataset.gpuStep))));
+    apply(0);
+  };
+  bootGpuJourney();
+  document.addEventListener('astro:page-load', bootGpuJourney);
+</script>

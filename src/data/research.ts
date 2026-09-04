@@ -6,6 +6,7 @@ export type ResearchItem = {
   kind: string;
   access: 'Public' | 'Private' | 'Open shelf';
   summary: string;
+  signature: string;
   href?: string;
 };
 
@@ -49,6 +50,7 @@ export const research: ResearchItem[] = [
     access: 'Public',
     href: 'https://github.com/SekiyaLab/clock-dataset',
     summary: 'What was actually knowable at the moment of a decision?',
+    signature: 'clock',
   },
   {
     title: 'Decision Assurance',
@@ -57,6 +59,7 @@ export const research: ResearchItem[] = [
     access: 'Public',
     href: 'https://github.com/SekiyaLab/decision-assurance',
     summary: 'When does a score stop being enough for a finite-capacity decision?',
+    signature: 'assurance',
   },
   {
     title: 'Degradation Diagnosis',
@@ -65,6 +68,7 @@ export const research: ResearchItem[] = [
     access: 'Public',
     href: 'https://github.com/SekiyaLab/degradation-diagnosis',
     summary: 'How much can a model’s trouble be diagnosed before its labels arrive?',
+    signature: 'diagnosis',
   },
   {
     title: 'Release Equivalence',
@@ -73,6 +77,7 @@ export const research: ResearchItem[] = [
     access: 'Public',
     href: 'https://github.com/SekiyaLab/release-equivalence',
     summary: 'Is the system after release still the one you tested?',
+    signature: 'release',
   },
   {
     title: 'Delayed Feedback',
@@ -80,6 +85,7 @@ export const research: ResearchItem[] = [
     kind: 'Study',
     access: 'Private',
     summary: 'Evaluating policies when outcomes arrive late, selectively, and after the policy has changed.',
+    signature: 'delay',
   },
   {
     title: 'DeepLOB',
@@ -88,6 +94,7 @@ export const research: ResearchItem[] = [
     access: 'Public',
     href: 'https://github.com/SekiyaLab/deep-lob',
     summary: 'How an experiment can manufacture confidence from a market with no signal.',
+    signature: 'lob',
   },
   {
     title: 'Spectral Recovery',
@@ -95,6 +102,7 @@ export const research: ResearchItem[] = [
     kind: 'Study',
     access: 'Private',
     summary: 'A controlled look at when correlation-matrix denoising helps—and when it does not.',
+    signature: 'spectral',
   },
   {
     title: 'Tail Estimator Audit',
@@ -102,6 +110,7 @@ export const research: ResearchItem[] = [
     kind: 'Study',
     access: 'Private',
     summary: 'Known-tail experiments for finding where familiar estimators bend or break.',
+    signature: 'tail',
   },
   {
     title: 'trace-npm',
@@ -110,6 +119,7 @@ export const research: ResearchItem[] = [
     access: 'Public',
     href: 'https://github.com/SekiyaLab/trace-npm',
     summary: 'A close look at what an npm lifecycle script touches, spawns, and contacts.',
+    signature: 'trace',
   },
   {
     title: 'Systems & Security Core',
@@ -117,6 +127,7 @@ export const research: ResearchItem[] = [
     kind: 'Experimental core',
     access: 'Private',
     summary: 'Range harnesses, evidence ledgers, and provenance tools for difficult systems questions.',
+    signature: 'core',
   },
   {
     title: 'Security Decision Invariance',
@@ -124,6 +135,7 @@ export const research: ResearchItem[] = [
     kind: 'Study',
     access: 'Private',
     summary: 'When a transformed telemetry record still supports the same security conclusion.',
+    signature: 'invariance',
   },
   {
     title: 'Agentic Systems',
@@ -131,6 +143,7 @@ export const research: ResearchItem[] = [
     kind: 'Shelf',
     access: 'Open shelf',
     summary: 'A deliberate open shelf for work on autonomous software, tools, and accountable coordination.',
+    signature: 'agentic',
   },
   {
     title: 'GPU Simulation Engine',
@@ -138,6 +151,7 @@ export const research: ResearchItem[] = [
     kind: 'Engine',
     access: 'Private',
     summary: 'GPU-first compute and rendering for typed simulation state.',
+    signature: 'gpu',
   },
   {
     title: 'Cascade Field Study',
@@ -145,5 +159,6 @@ export const research: ResearchItem[] = [
     kind: 'Interactive study',
     access: 'Private',
     summary: 'A deterministic field for watching a local shock remain bounded—or become a cascade.',
+    signature: 'cascade',
   },
 ];
