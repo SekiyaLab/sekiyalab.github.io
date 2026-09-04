@@ -1,58 +1,16 @@
-/* Sekiya — site-wide chrome: clock, field status, reveals, Lenis, register. */
+/* Sekiya — site-wide chrome: Lenis, register, plates, sidenotes.
+ *
+ * Note on `.reveal`: this class exists only as a CSS hook and is always
+ * fully visible (see base.css). An earlier version of this file hid
+ * `.reveal` content at opacity:0 until it scrolled into view. That made
+ * most of the homepage invisible to anything that doesn't scroll —
+ * a full-page screenshot, a slow connection, a blocked script, a printed
+ * page. Do not reintroduce scroll-gated visibility here. */
 
 declare global {
   interface Window {
     __sekiyaLenis?: { destroy: () => void };
   }
-}
-
-/* ---------- UTC clock — the institute's wall clock ---------- */
-function bootClock() {
-  const el = document.querySelector<HTMLElement>('[data-utc-clock]');
-  if (!el) return;
-  const tick = () => {
-    const d = new Date();
-    const hh = String(d.getUTCHours()).padStart(2, '0');
-    const mm = String(d.getUTCMinutes()).padStart(2, '0');
-    el.textContent = `${hh}:${mm} UTC`;
-  };
-  tick();
-  setInterval(tick, 20000);
-}
-
-/* ---------- header reflects the field's actual state ---------- */
-function bootFieldStatus() {
-  const el = document.querySelector<HTMLElement>('[data-field-status]');
-  if (!el) return;
-  document.addEventListener('sekiya:field', (e) => {
-    const running = (e as CustomEvent).detail?.running === true;
-    const dot = el.querySelector('.dot');
-    if (dot) dot.classList.toggle('paused', !running);
-    el.childNodes[1].textContent = running ? 'Field · running' : 'Field · paused';
-  });
-}
-
-/* ---------- scroll reveals (IO-based; safe everywhere) ---------- */
-let revealIO: IntersectionObserver | null = null;
-function bootReveals() {
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const els = document.querySelectorAll<HTMLElement>('.reveal:not(.in)');
-  if (reduced) {
-    els.forEach((el) => el.classList.add('in'));
-    return;
-  }
-  revealIO ??= new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('in');
-          revealIO!.unobserve(entry.target);
-        }
-      }
-    },
-    { rootMargin: '0px 0px -8% 0px', threshold: 0.05 },
-  );
-  els.forEach((el) => revealIO!.observe(el));
 }
 
 /* ---------- Lenis — silk scroll, with a hard off-ramp ---------- */
@@ -190,9 +148,6 @@ function bootRail() {
 }
 
 function boot() {
-  bootClock();
-  bootFieldStatus();
-  bootReveals();
   bootLenis();
   bootPlates();
   bootRegister();

@@ -16,19 +16,57 @@ const objects = await getCollection('objects', ({ data }) => !data.draft);
     </p>
   </header>
 
-  <section class="section shell" style="padding-top: 0;">
-    <div class="shelf-note reveal">
-      <p>
-        <strong>The shelf is being stocked.</strong> Notebooks are recovered and rebuilt from the
-        institute's older learning material before new ones are written.
+  <section class="section shell">
+    <div class="shelf">
+      <svg class="shelf-mark" viewBox="0 0 640 110" role="presentation" aria-hidden="true">
+        <line x1="0" y1="10" x2="640" y2="10" class="shelf-line" />
+        <line x1="0" y1="100" x2="640" y2="100" class="shelf-line" />
+        <line x1="150" y1="10" x2="150" y2="100" class="shelf-tick" />
+        <text x="150" y="72" text-anchor="middle" class="shelf-tick-label">01</text>
+      </svg>
+      <p class="shelf-lede reveal">
+        <strong>The shelf is being stocked.</strong> Sekiya's older learning material is being recovered
+        and rebuilt before new notebooks are written — so what arrives here is worth keeping open.
       </p>
-      <p>
-        The first notebook in preparation takes the field on the front page apart — reaction–diffusion
-        from scratch — until you could rebuild it yourself.
+      <p class="shelf-note reveal">
+        The first notebook in preparation takes a reaction–diffusion system apart, from the two rules
+        that grow it to the patterns nobody drew — until you could rebuild it yourself.
       </p>
-      <p class="mono mono-dim" style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;">
-        SK-ST-01 · reaction–diffusion from scratch · in preparation
-      </p>
+      <p class="mono mono-dim shelf-status reveal">SK-ST-01 · reaction–diffusion from scratch · in preparation</p>
     </div>
   </section>
 </Base>
+
+<style>
+  .shelf { max-width: 46em; }
+  .shelf-mark { width: 100%; height: auto; max-width: 420px; margin-bottom: clamp(36px, 5vw, 56px); }
+  .shelf-line { stroke: var(--hair-3); stroke-width: 1; }
+  .shelf-tick { stroke: var(--amber-dim); stroke-width: 1; stroke-dasharray: 2 5; }
+  .shelf-tick-label {
+    fill: var(--ink-4);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+  }
+  .shelf-lede {
+    font-family: var(--serif-display);
+    font-weight: 300;
+    font-size: clamp(21px, 2.4vw, 28px);
+    line-height: 1.4;
+    letter-spacing: -0.005em;
+    margin: 0;
+  }
+  .shelf-lede strong { font-weight: 400; }
+  .shelf-note {
+    margin: 20px 0 0;
+    font-size: 16px;
+    color: var(--ink-2);
+    max-width: 56ch;
+  }
+  .shelf-status {
+    margin: clamp(28px, 4vw, 40px) 0 0;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+</style>

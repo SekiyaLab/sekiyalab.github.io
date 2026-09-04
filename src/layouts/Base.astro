@@ -57,12 +57,7 @@ const nav = [
     <header class="site-header shell">
       <div class="status-line">
         <a class="wordmark" href="/">Sekiya<span class="wordmark-sub">INSTITUTE</span></a>
-        <div class="status-meta mono mono-dim" aria-hidden="true">
-          <span>Madrid</span>
-          <span data-utc-clock>--:-- UTC</span>
-          <span data-object-count>{objectCount} objects</span>
-          <span data-field-status><span class="dot paused"></span>Field · idle</span>
-        </div>
+        <span class="status-place mono mono-dim" aria-hidden="true">Madrid</span>
         <nav class="site-nav" aria-label="Primary">
           {
             nav.map((item) => (
@@ -98,12 +93,11 @@ const nav = [
         <a href="https://github.com/SekiyaLab" target="_blank" rel="noreferrer">GitHub ↗</a>
         <a href="https://www.npmjs.com/package/trace-npm" target="_blank" rel="noreferrer">trace-npm on npm ↗</a>
         <a href="https://joshuadefreitas.github.io" target="_blank" rel="noreferrer">Joshua de Freitas ↗</a>
-        <a href="https://ghalvera.github.io" target="_blank" rel="noreferrer">Ghalvera (archive) ↗</a>
         <span class="spacer"></span>
         <span>© {year} Sekiya Institute</span>
       </div>
       <p class="colophon" data-colophon>
-        build {build} · set in Newsreader &amp; DM Mono · the field on this site is computed, not recorded
+        build {build} · set in Newsreader &amp; DM Mono
       </p>
     </footer>
 

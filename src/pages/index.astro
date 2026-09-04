@@ -1,8 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import Field from '../components/Field.astro';
 import RegisterTable from '../components/RegisterTable.astro';
+import AreaPlate from '../components/AreaPlate.astro';
+import HeroGlyph from '../components/HeroGlyph.astro';
 import { AREA_LABEL } from '../content.config';
 
 const objects = await getCollection('objects', ({ data }) => !data.draft);
@@ -16,20 +17,20 @@ const sortedQuestions = [...questions].sort((a, b) => a.data.order - b.data.orde
 
 const areas = [
   {
-    code: 'M&S',
-    line: 'Model systems under change: releases, drift, delayed feedback, point-in-time truth — and mathematically interesting toy systems along the way.',
+    code: 'M&S' as const,
+    line: 'Model systems under change: releases, drift, delayed feedback, point-in-time truth.',
   },
   {
-    code: 'S&S',
-    line: 'What a system’s own record of events does and does not prove about what actually happened.',
+    code: 'S&S' as const,
+    line: 'What a system’s own record of events does and does not prove about what happened.',
   },
   {
-    code: 'AGT',
-    line: 'Whether an agent’s account of its own work can be trusted, and how you would know. An honest empty shelf — for now.',
+    code: 'AGT' as const,
+    line: 'Whether an agent’s account of its own work can be trusted, and how you would know.',
   },
   {
-    code: 'CMP',
-    line: 'Deterministic, reproducible, inspectable computation: what you see is provably what was computed.',
+    code: 'CMP' as const,
+    line: 'Deterministic, reproducible, inspectable computation — what you see is what was computed.',
   },
 ];
 
@@ -48,7 +49,46 @@ const fmt = (d: Date) =>
 ---
 
 <Base title="Sekiya — Institute for computational experimentation" objectCount={objects.length}>
-  <Field seed={20260904} preset="coral" statement={true} />
+  <!-- the opening -->
+  <section class="hero shell">
+    <div class="hero-grid">
+      <div>
+        <p class="hero-kicker" data-hero-kicker>Sekiya · institute</p>
+        <h1 class="hero-mark" data-hero-statement>An institute for <em>finding out</em>.</h1>
+        <p class="hero-lede">
+          Sekiya is an independent institute for computer science, mathematics and computational
+          experimentation. <em>Curiosity is the motive, experiment is the method</em>, understanding
+          is the reward.
+        </p>
+        <a class="hero-scroll" href="#atlas">Four loose areas of work</a>
+      </div>
+      <div class="hero-glyph-wrap" aria-hidden="true">
+        <HeroGlyph />
+      </div>
+    </div>
+  </section>
+
+  <!-- the atlas: four areas, four static plates -->
+  <section class="section" id="atlas" aria-label="Areas of work">
+    <div class="shell">
+      <p class="kicker reveal">Four loose areas — navigation, not departments</p>
+    </div>
+    <div class="atlas">
+      {
+        areaCounts.map((a) => (
+          <a class="area-plate reveal" href={`/?area=${encodeURIComponent(a.code)}#register`}>
+            <span class="ap-code">
+              {a.code}<span class="ap-count">{a.count} {a.count === 1 ? 'object' : 'objects'}</span>
+            </span>
+            <AreaPlate area={a.code} />
+            <h3>{AREA_LABEL[a.code]}</h3>
+            <p class="ap-question">{a.line}</p>
+            <span class="ap-link">Open this area →</span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
 
   <!-- enter through a question -->
   <section class="section question-rail shell" aria-label="Questions">
@@ -68,43 +108,6 @@ const fmt = (d: Date) =>
     </ol>
   </section>
 
-  <!-- the register -->
-  <section class="section shell" id="register" aria-label="The register">
-    <p class="kicker reveal">The register</p>
-    <div class="lens-row reveal" role="group" aria-label="Filter by area">
-      <button type="button" class="lens" data-lens="all" aria-pressed="true">
-        All<span class="lens-count">{objects.filter((o) => o.data.type !== 'note').length}</span>
-      </button>
-      {
-        areaCounts.map((a) => (
-          <button type="button" class="lens" data-lens={a.code} aria-pressed="false">
-            {a.code}
-            <span class="lens-count">{a.count}</span>
-          </button>
-        ))
-      }
-    </div>
-    <div class="reveal">
-      <RegisterTable entries={objects.filter((o) => o.data.type !== 'note')} />
-    </div>
-  </section>
-
-  <!-- areas as lenses -->
-  <section class="section shell" aria-label="Research areas">
-    <p class="kicker reveal">Four loose areas — navigation, not departments</p>
-    <ul class="area-list">
-      {
-        areaCounts.map((a) => (
-          <li class="reveal">
-            <span class="a-code">{a.code} · {a.count} {a.count === 1 ? 'object' : 'objects'}</span>
-            <h3>{AREA_LABEL[a.code]}</h3>
-            <p>{a.line}</p>
-          </li>
-        ))
-      }
-    </ul>
-  </section>
-
   <!-- study teaser -->
   <section class="section shell" aria-label="Study">
     <p class="kicker reveal">Study — the notebook shelf</p>
@@ -113,8 +116,7 @@ const fmt = (d: Date) =>
       <p>
         Study is Sekiya's optional learning surface: visual explanations, rebuilds of mechanisms from
         scratch, simulations and deep dives — opened when curiosity strikes, never on a schedule. The
-        shelf is being stocked. The first notebook takes the field on this page apart until you could
-        rebuild it.
+        shelf is being stocked; the first notebook is in preparation.
       </p>
       <a class="text-link" href="/study/">Open the shelf →</a>
     </div>
@@ -139,6 +141,27 @@ const fmt = (d: Date) =>
     <p style="margin-top: 22px;" class="reveal">
       <a class="text-link" href="/journal/">All transmissions →</a>
     </p>
+  </section>
+
+  <!-- the full index -->
+  <section class="section shell" id="register" aria-label="The full index">
+    <p class="kicker reveal">The full index</p>
+    <div class="lens-row reveal" role="group" aria-label="Filter by area">
+      <button type="button" class="lens" data-lens="all" aria-pressed="true">
+        All<span class="lens-count">{objects.filter((o) => o.data.type !== 'note').length}</span>
+      </button>
+      {
+        areaCounts.map((a) => (
+          <button type="button" class="lens" data-lens={a.code} aria-pressed="false">
+            {a.code}
+            <span class="lens-count">{a.count}</span>
+          </button>
+        ))
+      }
+    </div>
+    <div class="reveal">
+      <RegisterTable entries={objects.filter((o) => o.data.type !== 'note')} />
+    </div>
   </section>
 </Base>
 

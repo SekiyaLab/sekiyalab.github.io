@@ -2,7 +2,7 @@ import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
 const AREA = z.enum(['M&S', 'S&S', 'AGT', 'CMP']);
-const TYPE = z.enum(['study', 'finding', 'instrument', 'note', 'field']);
+const TYPE = z.enum(['study', 'finding', 'instrument', 'note']);
 
 const objects = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/objects' }),
@@ -49,7 +49,6 @@ export const TYPE_PREFIX: Record<string, string> = {
   finding: 'f',
   instrument: 'i',
   note: 'n',
-  field: 'c',
 };
 
 export const PREFIX_TYPE: Record<string, string> = Object.fromEntries(

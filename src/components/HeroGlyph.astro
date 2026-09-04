@@ -1,0 +1,45 @@
+---
+/* The opening mark. A phyllotaxis spiral — the golden-angle construction
+   behind sunflower heads and pinecones — drawn once, at build time, as
+   plain SVG. Real mathematics, no runtime cost, nothing that can fail to
+   a visitor without a GPU. One quiet amber arc marks a single turn of the
+   spiral so the eye has somewhere to land. */
+
+const N = 320;
+const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
+const SIZE = 640;
+const C = SIZE / 2;
+const SCALE = 16.6;
+
+const points = Array.from({ length: N }, (_, i) => {
+  const r = SCALE * Math.sqrt(i);
+  const theta = i * GOLDEN_ANGLE;
+  return {
+    x: C + r * Math.cos(theta),
+    y: C + r * Math.sin(theta),
+    i,
+    r: 1.1 + (i / N) * 2.1,
+  };
+});
+
+/* one visible spiral arm: points spaced by a Fibonacci number share an arm,
+   so stepping by 21 (not by 1) traces a single smooth curve, not a star */
+const armStep = 21;
+const arm = Array.from({ length: 9 }, (_, k) => points[40 + k * armStep]);
+const arc = arm
+  .map((p, k) => `${k === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`)
+  .join(' ');
+---
+
+<svg class="hero-glyph" viewBox={`0 0 ${SIZE} ${SIZE}`} role="presentation" aria-hidden="true">
+  {points.map((p) => (
+    <circle cx={p.x} cy={p.y} r={p.r} class="hg-dot" style={`--d:${(p.i / N).toFixed(3)}`} />
+  ))}
+  <path d={arc} class="hg-arc" />
+</svg>
+
+<style>
+  .hero-glyph { width: 100%; height: 100%; overflow: visible; }
+  .hg-dot { fill: var(--ink-4); opacity: calc(0.16 + var(--d) * 0.5); }
+  .hg-arc { fill: none; stroke: var(--amber-dim); stroke-width: 1.4; }
+</style>

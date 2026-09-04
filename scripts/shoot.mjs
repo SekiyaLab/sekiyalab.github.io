@@ -5,7 +5,7 @@ import { mkdirSync } from 'node:fs';
 const base = process.env.BASE ?? 'http://localhost:4321';
 const paths = process.argv.slice(2).length
   ? process.argv.slice(2)
-  : ['/', '/f/audit-retrieval/', '/s/deep-lob/', '/i/trace-npm/', '/c/gray-scott-field/', '/journal/', '/institute/', '/study/', '/q/deployed-vs-tested/'];
+  : ['/', '/f/audit-retrieval/', '/s/deep-lob/', '/i/trace-npm/', '/journal/', '/institute/', '/study/', '/q/deployed-vs-tested/'];
 
 const sizes = [
   { name: 'desktop', width: 1440, height: 1000 },

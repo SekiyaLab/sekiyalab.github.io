@@ -11,36 +11,22 @@ const pass = (msg) => console.log(`ok    ${msg}`);
 
 const browser = await chromium.launch();
 
-/* ---------- 1. Field determinism: same seed ⇒ same checksum at same step ---------- */
+/* ---------- 1. no invisible page: .reveal content must not depend on
+   scrolling or JS timing to become visible (regression guard — the
+   previous homepage shipped most of its content at opacity:0 until an
+   IntersectionObserver fired, which a full-page capture never triggered) ---------- */
 {
-  const readChecksum = async () => {
-    const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
-    await page.goto(base + '/', { waitUntil: 'networkidle' });
-    await page.waitForSelector('[data-r-checksum]');
-    /* scrub to a fixed step and wait for the engine to catch up */
-    await page.evaluate(() => new Promise((resolve) => {
-      const track = document.querySelector('[data-time-track]');
-      const target = 512;
-      const iv = setInterval(() => {
-        const now = parseInt(track.getAttribute('aria-valuenow') ?? '0', 10);
-        if (now >= target) { clearInterval(iv); resolve(); }
-      }, 120);
-      track.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', shiftKey: true, bubbles: true }));
-      track.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', shiftKey: true, bubbles: true }));
-    }));
-    await page.waitForTimeout(400);
-    const checksum = await page.textContent('[data-r-checksum]');
-    const step = await page.textContent('[data-r-step]');
-    await page.close();
-    return { checksum: checksum?.trim(), step: step?.trim() };
-  };
-  const a = await readChecksum();
-  const b = await readChecksum();
-  if (a.checksum && a.checksum === b.checksum && a.checksum !== '00000000') {
-    pass(`field determinism — checksum ${a.checksum} reproduced at step ~512`);
-  } else {
-    fail(`field determinism — ${a.checksum} vs ${b.checksum}`);
-  }
+  const page = await browser.newPage({ viewport: { width: 1280, height: 2000 } });
+  await page.goto(base + '/', { waitUntil: 'domcontentloaded' });
+  /* no waitForTimeout, no scroll: check the instant the DOM is parsed */
+  const hidden = await page.evaluate(() => {
+    const els = Array.from(document.querySelectorAll('.reveal'));
+    return els.filter((el) => getComputedStyle(el).opacity === '0').length;
+  });
+  const total = await page.evaluate(() => document.querySelectorAll('.reveal').length);
+  if (hidden === 0) pass(`no invisible content — 0/${total} .reveal elements at opacity:0 pre-scroll`);
+  else fail(`invisible content — ${hidden}/${total} .reveal elements at opacity:0 before any scroll`);
+  await page.close();
 }
 
 /* ---------- 2. axe on key surfaces ---------- */
@@ -78,18 +64,17 @@ for (const p of axePages) {
   await page.close();
 }
 
-/* ---------- 4. keyboard: time axis operable ---------- */
+/* ---------- 4. keyboard: area lens filter is operable ---------- */
 {
   const page = await browser.newPage();
   await page.goto(base + '/', { waitUntil: 'networkidle' });
-  await page.waitForSelector('[data-time-track]');
-  await page.focus('[data-time-track]');
-  const before = await page.textContent('[data-r-step]');
-  await page.keyboard.press('ArrowRight');
-  await page.waitForTimeout(500);
-  const after = await page.textContent('[data-r-step]');
-  if (before !== after) pass(`keyboard scrub — step ${before?.trim()} → ${after?.trim()}`);
-  else fail('keyboard scrub — step did not change');
+  await page.waitForSelector('[data-lens="M&S"]');
+  await page.focus('[data-lens="M&S"]');
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(200);
+  const pressed = await page.getAttribute('[data-lens="M&S"]', 'aria-pressed');
+  if (pressed === 'true') pass('keyboard filter — area lens toggles via keyboard');
+  else fail('keyboard filter — area lens did not toggle via keyboard');
   await page.close();
 }
 
