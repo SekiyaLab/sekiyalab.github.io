@@ -4,7 +4,7 @@ export type ResearchItem = {
   title: string;
   area: AreaCode;
   kind: string;
-  access: 'Public' | 'Private';
+  access: 'Public' | 'Private' | 'Open shelf';
   summary: string;
   href?: string;
 };
@@ -129,7 +129,7 @@ export const research: ResearchItem[] = [
     title: 'Agentic Systems',
     area: 'agents',
     kind: 'Shelf',
-    access: 'Private',
+    access: 'Open shelf',
     summary: 'A deliberate open shelf for work on autonomous software, tools, and accountable coordination.',
   },
   {

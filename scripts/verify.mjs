@@ -87,10 +87,10 @@ for (const p of axePages) {
 {
   const page = await browser.newPage();
   await page.goto(base + '/', { waitUntil: 'networkidle' });
-  const privateLinks = await page.locator('.work-card .access-tag.is-private >> xpath=ancestor::li//a').count();
+  const nonPublicLinks = await page.locator('.work-card:has(.access-tag:not(.is-public)) a').count();
   const named = await page.locator('[data-work-area]').count();
-  if (privateLinks === 0 && named >= 14) pass(`work index — ${named} named entries; private entries are not linked`);
-  else fail(`work index — private links=${privateLinks}, named=${named}`);
+  if (nonPublicLinks === 0 && named >= 14) pass(`work index — ${named} named entries; non-public entries are not linked`);
+  else fail(`work index — non-public links=${nonPublicLinks}, named=${named}`);
   await page.close();
 }
 

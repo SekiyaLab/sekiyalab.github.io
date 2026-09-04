@@ -33,7 +33,10 @@ const counts = Object.fromEntries(
         <span class="work-card__number">{String(index + 1).padStart(2, '0')}</span>
         <div class="work-card__meta">
           <span>{item.kind}</span>
-          <span class:list={['access-tag', item.access === 'Public' ? 'is-public' : 'is-private']}>
+          <span class:list={[
+            'access-tag',
+            item.access === 'Public' ? 'is-public' : item.access === 'Private' ? 'is-private' : 'is-open',
+          ]}>
             {item.access}
           </span>
         </div>

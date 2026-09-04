@@ -828,6 +828,7 @@ body::after { opacity: 0.014; }
 .access-tag { padding: 3px 5px; border: 1px solid var(--hair-2); }
 .access-tag.is-public { color: #126451; border-color: rgba(18, 100, 81, 0.42); }
 .access-tag.is-private { color: #6a596a; border-color: rgba(106, 89, 106, 0.34); }
+.access-tag.is-open { color: #566d52; border-color: rgba(86, 109, 82, 0.36); }
 .work-card h3 { margin: 18px 0 0; color: var(--ink); font-family: var(--serif-display); font-size: clamp(24px, 2.3vw, 34px); font-weight: 300; letter-spacing: -0.03em; line-height: 1.03; }
 .work-card h3 a { text-decoration: none; }
 .work-card h3 a:hover { color: var(--amber); }
