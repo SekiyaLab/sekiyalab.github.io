@@ -38,37 +38,3 @@ Academy is a navigable knowledge field whose rooms turn recovered technical note
 into visual traces and experiments. Canvas remains progressive enhancement; text,
 SVG, focus states, static compositions, and reduced-motion behavior retain the
 meaning without it.
-
-## Monochrome correction — same day, second pass
-
-The Signal Cartography palette above (cyan carrier, violet uncertainty, green
-compute, magenta anomaly) read as cyberpunk-product, not Sekiya. Direction
-corrected: black and white as the actual identity, not a dark theme.
-
-**References studied for richness without chroma:** black-and-white editorial
-and museum-identity design; Japanese monochrome graphic design (disciplined
-asymmetry, negative space, ink/paper sensibility); generative line art and
-oscilloscope/signal imagery; scientific and technical drawing; the personal
-site at joshuadefreitas.github.io as aesthetic DNA — restrained, high-contrast
-monochrome, precise typographic hierarchy, evidence-first writing.
-
-**What creates richness in the absence of colour:** luminance steps (many
-blacks — void, graphite, charcoal, smoke, gunmetal — many greys — steel,
-cool, warm, silver — one white), translucent white hairlines instead of
-tinted borders, soft white bloom standing in for glow, geometry and stroke
-weight doing the work hue used to do, and grain/noise (already present,
-untouched — it never depended on colour).
-
-**Sekiya synthesis: the Black Institute.** The hero is a single luminous
-topology — silver threads and points on true black, cursor-lit, oscilloscope
-interference bands, one soft light entering from the pointer — screenshot-
-stable, then better in motion. Every card, glyph, and lesson room keeps its
-existing distinct geometry (already strong) and is retold in luminance
-instead of hue: each research object gets a different grey value from the
-same ramp rather than a different hue. The one accent is white itself — "the
-Signal" — used exactly where the old palette used amber: hover, focus,
-active state, pressed filters. No global cyan/violet/green/magenta remains
-anywhere in the codebase (verified by grep for non-grayscale hex/rgba across
-`src/`). A secondary dim grey — "the Quiet" — marks the other side of a
-comparison (purged vs. leaking windows, read vs. write buffer) where the
-design previously reached for a second hue.

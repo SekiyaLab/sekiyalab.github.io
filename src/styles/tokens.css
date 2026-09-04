@@ -1,75 +1,49 @@
-/* Sekiya — design tokens. The Black Institute.
-   One monochrome world: many blacks, many greys, one white. No global hue.
-
-   --amber / --amber-dim / --amber-hair name "the Signal" — the single bright,
-   near-white accent used for interaction, marks and focus across the whole
-   site. --spectral / --spectral-dim name "the Quiet" — a dimmer, cooler grey
-   used for a secondary state (the other side of a comparison, a pending
-   role). Names are historical; values are monochrome. Do not reintroduce hue
-   under these tokens — see docs/design-research-2026-09-04.md. */
+/* Sekiya — design tokens. Bright enough to read; strange enough to remember. */
 
 :root {
-  /* ---- primitive ramp: absolute black to pure white ---- */
-  --c-black: #030303;
-  --c-black-2: #08080a;
-  --c-graphite: #0e0f12;
-  --c-charcoal: #16171b;
-  --c-smoke: #202126;
-  --c-gunmetal: #2b2c32;
-  --c-steel: #43454c;
-  --c-grey-cool: #83868f;
-  --c-grey-warm: #94897f;
-  --c-silver: #a9acb5;
-  --c-off-white: #d7d8dc;
-  --c-white: #f3f2ee;
-  --c-white-hot: #ffffff;
+  /* ground */
+  --void: #f5f3ed;
+  --raised: #fffdf8;
+  --plate: #e9e7de;
+  --plate-2: #dcddd4;
 
-  /* ---- ground ---- */
-  --void: var(--c-black);
-  --raised: var(--c-graphite);
-  --plate: var(--c-charcoal);
-  --plate-2: var(--c-smoke);
+  /* ink — ordinary reading text earns ordinary reading contrast. */
+  --ink: #16201d;
+  --ink-2: #43504a;
+  --ink-3: #65716a;
+  --ink-4: #53615a;
 
-  /* ---- ink — ordinary reading text earns ordinary reading contrast ---- */
-  --ink: var(--c-white);
-  --ink-2: var(--c-off-white);
-  --ink-3: var(--c-grey-cool);
-  --ink-4: var(--c-grey-warm);
+  /* hairlines */
+  --hair: rgba(22, 32, 29, 0.12);
+  --hair-2: rgba(22, 32, 29, 0.22);
+  --hair-3: rgba(22, 32, 29, 0.38);
 
-  /* ---- hairlines — translucent white, legible on any ground in the ramp ---- */
-  --hair: rgba(255, 255, 255, 0.08);
-  --hair-2: rgba(255, 255, 255, 0.14);
-  --hair-3: rgba(255, 255, 255, 0.26);
+  /* accents — used at ~2% dosage */
+  --amber: #a84328;
+  --amber-dim: rgba(168, 67, 40, 0.62);
+  --amber-hair: rgba(168, 67, 40, 0.3);
+  --spectral: #166d7d;
+  --spectral-dim: rgba(22, 109, 125, 0.58);
 
-  /* ---- the Signal — bright neutral, the one accent, used sparingly ---- */
-  --amber: var(--c-white);
-  --amber-dim: rgba(243, 242, 238, 0.66);
-  --amber-hair: rgba(243, 242, 238, 0.28);
-
-  /* ---- the Quiet — dim cool grey, the other state in a comparison ---- */
-  --spectral: var(--c-silver);
-  --spectral-dim: rgba(169, 172, 181, 0.5);
-
-  /* ---- type ---- */
+  /* type */
   --serif-display: 'Newsreader Display', ui-serif, Georgia, 'Times New Roman', serif;
   --serif: 'Newsreader Text', ui-serif, Georgia, 'Times New Roman', serif;
   --serif-italic: 'Newsreader Italic', 'Newsreader Text', ui-serif, Georgia, serif;
   --mono: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  --sans: Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
-  /* ---- layout ---- */
-  --shell: 1520px;
+  /* layout */
+  --shell: 1320px;
   --measure: 66ch;
   --gutter: max(24px, calc((100vw - var(--shell)) / 2));
   --rail: 200px;
-  --section-y: clamp(88px, 11vw, 176px);
+  --section-y: clamp(80px, 10vw, 150px);
 
-  /* ---- motion ---- */
+  /* motion */
   --ease-ui: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --t-fast: 160ms;
   --t-med: 320ms;
   --t-slow: 560ms;
 
-  color-scheme: dark;
+  color-scheme: light;
 }

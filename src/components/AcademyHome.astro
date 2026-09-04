@@ -13,8 +13,8 @@ import AcademyMap from './AcademyMap.astro';
       <p class="eyebrow">Sekiya Academy / curiosity has no prerequisites</p>
       <h1>Open a mechanism.<br /><em>See what moves.</em></h1>
       <p>
-        A small, growing set of rooms, each one a mechanism taken apart until it's obvious.
-        No badges, no obligation to finish anything — but a real order, if you want one.
+        A cabinet of ideas explained until they feel obvious. No curriculum, no badges,
+        no obligation to finish anything.
       </p>
     </div>
     <AcademyMap />
@@ -24,7 +24,7 @@ import AcademyMap from './AcademyMap.astro';
     <div class="academy-room__head">
       <p class="eyebrow">Rooms currently open</p>
       <h2 id="open-rooms">Two ways into the machine.</h2>
-      <p>Recovered from the GPU engine’s real implementation notes, then rebuilt as short, visual explanations.</p>
+      <p>Recovered from the GPU engine’s real implementation notes, then rebuilt as visual explanations.</p>
     </div>
 
     <div class="notebook-grid">
@@ -61,46 +61,25 @@ import AcademyMap from './AcademyMap.astro';
         <p class="eyebrow">Recovered shelf / GPU simulation engine</p>
         <h2>Thirteen useful things survived.</h2>
         <p class="academy-cabinet__lede">
-          Practical notes written while building a GPU-first simulation engine. The old
-          identity stays in history; the mechanisms are still worth opening. Grouped the way
-          a course would group them, not the order they were written in.
+          They began as practical notes written while building a GPU-first simulation engine.
+          The old identity stays in history. The mechanisms are still worth opening.
         </p>
       </div>
-      <div class="academy-syllabus">
-        <div class="academy-syllabus__group">
-          <p class="academy-syllabus__label">01 · Execution</p>
-          <ol class="academy-index">
-            <li class="is-open"><span>01</span><strong>WebGPU compute mental model</strong><em>open room</em><p>Why the GPU is thousands of tiny copies of one instruction, not one fast CPU.</p></li>
-            <li><span>02</span><strong>Dispatch and thread organisation</strong><em>in room 01</em><p>Choosing workgroup size and covering the tail when the count doesn't divide evenly.</p></li>
-            <li><span>03</span><strong>Buffer layouts and alignment</strong><em>recovered</em><p>Why WGSL structs need explicit padding to match what the CPU wrote.</p></li>
-            <li><span>04</span><strong>Atomics and race conditions</strong><em>recovered</em><p>What actually happens when two invocations write the same address at once.</p></li>
-          </ol>
-        </div>
-        <div class="academy-syllabus__group">
-          <p class="academy-syllabus__label">02 · State &amp; correctness</p>
-          <ol class="academy-index">
-            <li class="is-open"><span>05</span><strong>Ping-pong buffers</strong><em>open room</em><p>Reading and writing the same world at once quietly changes the rules — the two-buffer fix.</p></li>
-            <li><span>06</span><strong>Determinism in simulation</strong><em>recovered</em><p>What has to be fixed — seed, order, precision — before "run it again" means anything.</p></li>
-            <li><span>07</span><strong>Parity tests and golden fixtures</strong><em>recovered</em><p>Proving a rewrite behaves like the original, not just that it compiles.</p></li>
-            <li><span>08</span><strong>Epsilon or strict equality?</strong><em>recovered</em><p>Why floating point forces a choice most tests never make explicit.</p></li>
-          </ol>
-        </div>
-        <div class="academy-syllabus__group">
-          <p class="academy-syllabus__label">03 · Systems &amp; networks</p>
-          <ol class="academy-index">
-            <li><span>09</span><strong>Cascade models and network diffusion</strong><em>recovered</em><p>How a local shock stays bounded, or becomes a cascade, in a connected field.</p></li>
-            <li><span>10</span><strong>Directed and bidirectional flow</strong><em>recovered</em><p>Two very different network behaviours that look identical drawn on paper.</p></li>
-            <li><span>11</span><strong>Explicit interfaces over hidden state</strong><em>recovered</em><p>A small design habit that turns silent bugs into loud, early ones.</p></li>
-          </ol>
-        </div>
-        <div class="academy-syllabus__group">
-          <p class="academy-syllabus__label">04 · Practice</p>
-          <ol class="academy-index">
-            <li><span>12</span><strong>Writing implementation briefs</strong><em>retained</em><p>Scoping a change before writing it, so review has something real to check against.</p></li>
-            <li><span>13</span><strong>Reading line reviews</strong><em>retained</em><p>What a careful review is actually looking for, line by line.</p></li>
-          </ol>
-        </div>
-      </div>
+      <ol class="academy-index">
+        <li><span>01</span><strong>Atomics and race conditions</strong><em>source recovered</em></li>
+        <li class="is-open"><span>02</span><strong>WebGPU compute mental model</strong><em>open</em></li>
+        <li class="is-open"><span>03</span><strong>Ping-pong buffers</strong><em>open</em></li>
+        <li><span>04</span><strong>Buffer layouts and alignment</strong><em>source recovered</em></li>
+        <li><span>05</span><strong>Dispatch and thread organisation</strong><em>part of room 01</em></li>
+        <li><span>06</span><strong>Determinism in simulation</strong><em>source recovered</em></li>
+        <li><span>07</span><strong>Parity tests and golden fixtures</strong><em>source recovered</em></li>
+        <li><span>08</span><strong>Epsilon or strict equality?</strong><em>source recovered</em></li>
+        <li><span>09</span><strong>Cascade models and network diffusion</strong><em>source recovered</em></li>
+        <li><span>10</span><strong>Directed and bidirectional flow</strong><em>source recovered</em></li>
+        <li><span>11</span><strong>Explicit interfaces over hidden state</strong><em>source recovered</em></li>
+        <li><span>12</span><strong>Writing implementation briefs</strong><em>source retained</em></li>
+        <li><span>13</span><strong>Reading line reviews</strong><em>source retained</em></li>
+      </ol>
     </div>
   </section>
 
