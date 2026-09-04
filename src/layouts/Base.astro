@@ -12,7 +12,7 @@ interface Props {
 
 const {
   title,
-  description = 'Sekiya is an independent institute for computer science, mathematics and computational experimentation.',
+  description = 'Sekiya is an independent place for computer science and computational experimentation.',
   objectCount = 0,
 } = Astro.props;
 
@@ -20,12 +20,6 @@ const path = Astro.url.pathname;
 const build = import.meta.env.GITHUB_SHA?.slice(0, 7) ?? 'dev';
 const year = new Date().getUTCFullYear();
 
-const nav = [
-  { href: '/', label: 'Index' },
-  { href: '/study/', label: 'Study' },
-  { href: '/journal/', label: 'Journal' },
-  { href: '/institute/', label: 'Institute' },
-];
 ---
 
 <!doctype html>
@@ -38,7 +32,7 @@ const nav = [
     <meta name="description" content={description} />
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Sekiya Institute" />
+    <meta property="og:site_name" content="Sekiya" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content="https://sekiyalab.github.io/og.png" />
@@ -56,11 +50,16 @@ const nav = [
 
     <header class="site-header shell">
       <div class="status-line">
-        <a class="wordmark" href="/">Sekiya<span class="wordmark-sub">INSTITUTE</span></a>
-        <span class="status-place mono mono-dim" aria-hidden="true">Madrid</span>
+        <a class="wordmark" href="/">Sekiya</a>
+        <span class="status-place mono mono-dim" aria-hidden="true">Systems, models, computation</span>
         <nav class="site-nav" aria-label="Primary">
           {
-            nav.map((item) => (
+            [
+              { href: '/#work', label: 'Work' },
+              { href: '/#questions', label: 'Questions' },
+              { href: '/study/', label: 'Notebook' },
+              { href: '/institute/', label: 'About' },
+            ].map((item) => (
               <a
                 href={item.href}
                 aria-current={
@@ -86,15 +85,13 @@ const nav = [
     </main>
 
     <footer class="site-footer">
-      <p class="footer-creed">
-        Curiosity is the motive. <strong>Experiment is the method.</strong> Understanding is the reward.
-      </p>
+      <p class="footer-creed">Built to be looked at closely.</p>
       <div class="footer-grid">
         <a href="https://github.com/SekiyaLab" target="_blank" rel="noreferrer">GitHub ↗</a>
         <a href="https://www.npmjs.com/package/trace-npm" target="_blank" rel="noreferrer">trace-npm on npm ↗</a>
         <a href="https://joshuadefreitas.github.io" target="_blank" rel="noreferrer">Joshua de Freitas ↗</a>
         <span class="spacer"></span>
-        <span>© {year} Sekiya Institute</span>
+        <span>© {year} Sekiya</span>
       </div>
       <p class="colophon" data-colophon>
         build {build} · set in Newsreader &amp; DM Mono

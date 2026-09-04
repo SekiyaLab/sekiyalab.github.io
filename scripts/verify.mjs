@@ -64,17 +64,33 @@ for (const p of axePages) {
   await page.close();
 }
 
-/* ---------- 4. keyboard: area lens filter is operable ---------- */
+/* ---------- 4. keyboard: the work index filter is operable ---------- */
 {
   const page = await browser.newPage();
   await page.goto(base + '/', { waitUntil: 'networkidle' });
-  await page.waitForSelector('[data-lens="M&S"]');
-  await page.focus('[data-lens="M&S"]');
+  await page.waitForSelector('[data-research-filter="models"]');
+  await page.focus('[data-research-filter="models"]');
   await page.keyboard.press('Enter');
   await page.waitForTimeout(200);
-  const pressed = await page.getAttribute('[data-lens="M&S"]', 'aria-pressed');
-  if (pressed === 'true') pass('keyboard filter — area lens toggles via keyboard');
-  else fail('keyboard filter — area lens did not toggle via keyboard');
+  const pressed = await page.getAttribute('[data-research-filter="models"]', 'aria-pressed');
+  const visible = await page.locator('[data-work-area]:not([hidden])').count();
+  const nonModelsVisible = await page.locator('[data-work-area]:not([hidden]):not([data-work-area="models"])').count();
+  if (pressed === 'true' && visible > 0 && nonModelsVisible === 0) {
+    pass('keyboard filter — work index filters to the selected area');
+  } else {
+    fail(`keyboard filter — pressed=${pressed}, visible=${visible}, non-models=${nonModelsVisible}`);
+  }
+  await page.close();
+}
+
+/* ---------- 5. public/private boundary: private work is named, never linked ---------- */
+{
+  const page = await browser.newPage();
+  await page.goto(base + '/', { waitUntil: 'networkidle' });
+  const privateLinks = await page.locator('.work-card .access-tag.is-private >> xpath=ancestor::li//a').count();
+  const named = await page.locator('[data-work-area]').count();
+  if (privateLinks === 0 && named >= 14) pass(`work index — ${named} named entries; private entries are not linked`);
+  else fail(`work index — private links=${privateLinks}, named=${named}`);
   await page.close();
 }
 

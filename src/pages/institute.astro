@@ -5,57 +5,51 @@ import Base from '../layouts/Base.astro';
 const objects = await getCollection('objects', ({ data }) => !data.draft);
 ---
 
-<Base title="Institute — Sekiya" description="What Sekiya is: an independent institute for computer science, mathematics and computational experimentation." objectCount={objects.length}>
+<Base title="About Sekiya" description="A place for computer science and computational experimentation." objectCount={objects.length}>
   <header class="page-head shell">
-    <p class="kicker">Institute</p>
-    <h1>A reading room, switched on.</h1>
+    <p class="kicker">About Sekiya</p>
+    <h1>A place to leave a question open for a while.</h1>
     <p class="page-sub">
-      Sekiya is an independent institute for computer science, mathematics and computational
-      experimentation. It exists for curiosity: elegant experiments, strange behaviour, complexity made
-      visible, systems built simply to be understood. Serious mathematics and engineering —
-      <em>without academic stiffness</em>.
+      Sekiya is an independent place for computer science and computational experimentation. It is for
+      elegant experiments, strange behaviour, complexity made visible, and systems built simply to be
+      understood. Serious work, without the stiff collar.
     </p>
   </header>
 
   <section class="section shell">
     <div class="institute-grid">
       <div class="reveal">
-        <h3>Spirit</h3>
+        <h3>What starts it</h3>
         <p>
-          discover → experiment → understand → build → show
-        </p>
-        <p>
-          A description of character, not a workflow. Nothing here passes through gates; a question is
-          enough to begin.
+          Curiosity. A question is enough to begin; the rest has to earn its place.
         </p>
       </div>
 
       <div class="reveal">
         <h3>Areas</h3>
         <ul>
-          <li>Models &amp; Statistics — model systems, estimators, learning and inference under change</li>
-          <li>Systems &amp; Security — what a record can and cannot establish about what happened</li>
-          <li>Agentic Systems — whether an agent's account of its work can be trusted</li>
-          <li>Computation — deterministic, reproducible, inspectable computing</li>
+          <li>Models &amp; Statistics — uncertain, delayed, and slightly unruly systems</li>
+          <li>Systems &amp; Security — traces, hidden state, failure, and recovery</li>
+          <li>Agentic Systems — autonomous software with some explaining to do</li>
+          <li>Computation — simulation and visual machinery for complex behaviour</li>
         </ul>
       </div>
 
       <div class="reveal">
-        <h3>Standards</h3>
+        <h3>What stays</h3>
         <p>
-          Whatever a Sekiya study claims, the claim is earned: reproducible runs, stated limits, and
-          results that say where they stop. Rigor is the infrastructure here — it is not the identity.
+          The useful parts: the code, the limits, the failures, and enough of the path that someone else
+          can see where the result came from.
         </p>
       </div>
 
       <div class="reveal">
-        <h3>Standing work</h3>
+        <h3>Public work</h3>
         <p>
-          Some instruments here are older than the institute's name and keep the public identity they
-          were first published under &mdash;
+          Public work is linked. Private work is named on the index, but stays private until it is ready.
+          One useful tool is
           <a href="https://www.npmjs.com/package/trace-npm" target="_blank" rel="noreferrer">trace-npm</a>
-          {' '}ships on npm under the name it always has. Object numbers carry over unchanged; a small
-          <span class="mono mono-dim">origin</span> tag on those pages says where a piece of work began.
+          {' '}— a small instrument for seeing what an npm lifecycle script actually did.
         </p>
       </div>
 
@@ -63,7 +57,7 @@ const objects = await getCollection('objects', ({ data }) => !data.draft);
         <h3>Elsewhere</h3>
         <p>
           <a href="https://joshuadefreitas.github.io" target="_blank" rel="noreferrer">Joshua de Freitas</a>
-          &mdash; the founder's personal site. Sekiya is the research; everything else is somewhere else.
+          {' '}keeps a personal index of projects, writing, and other experiments.
         </p>
       </div>
     </div>
