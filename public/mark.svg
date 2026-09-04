@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <title>Sekiya — signal mark</title>
+  <defs>
+    <radialGradient id="core" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9" />
+      <stop offset="45%" stop-color="#ffffff" stop-opacity="0.22" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <rect width="200" height="200" fill="#030303" />
+
+  <!-- instrument bezel -->
+  <circle cx="100" cy="100" r="90" fill="none" stroke="#ffffff" stroke-opacity="0.14" stroke-width="1" />
+  <g stroke="#ffffff" stroke-opacity="0.32" stroke-width="1.2">
+    <line x1="100" y1="6" x2="100" y2="16" />
+    <line x1="100" y1="184" x2="100" y2="194" />
+    <line x1="6" y1="100" x2="16" y2="100" />
+    <line x1="184" y1="100" x2="194" y2="100" />
+  </g>
+
+  <!-- the trace: a single unbroken signal path through five nodes -->
+  <circle cx="100" cy="100" r="26" fill="url(#core)" />
+  <path d="M140.8,49 L60.9,71.1 L100,100 L140.8,151 L60.9,128.9"
+        fill="none" stroke="#c9cbd3" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
+
+  <g fill="#f3f2ee">
+    <circle cx="140.8" cy="49" r="5" />
+    <circle cx="60.9" cy="71.1" r="5" />
+    <circle cx="140.8" cy="151" r="5" />
+    <circle cx="60.9" cy="128.9" r="5" />
+  </g>
+  <circle cx="100" cy="100" r="8.5" fill="#ffffff" />
+</svg>

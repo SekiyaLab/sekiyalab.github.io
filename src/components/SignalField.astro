@@ -58,9 +58,10 @@
     const draw = (now = 0) => {
       const time = now / 2400;
       context.clearRect(0, 0, width, height);
-      context.fillStyle = '#020307';
+      context.fillStyle = '#030303';
       context.fillRect(0, 0, width, height);
 
+      /* a single soft light entering the system, anchored to the cursor */
       const glow = context.createRadialGradient(
         (pointer.active ? pointer.x : .69) * width,
         (pointer.active ? pointer.y : .43) * height,
@@ -69,26 +70,27 @@
         (pointer.active ? pointer.y : .43) * height,
         Math.max(width, height) * .68,
       );
-      glow.addColorStop(0, 'rgba(30, 238, 255, .105)');
-      glow.addColorStop(.34, 'rgba(79, 52, 255, .055)');
+      glow.addColorStop(0, `rgba(255, 255, 255, ${pointer.active ? .1 : .06})`);
+      glow.addColorStop(.4, 'rgba(255, 255, 255, .02)');
       glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
       context.fillStyle = glow;
       context.fillRect(0, 0, width, height);
 
+      /* a luminous topology: silver threads, depth told by opacity and width */
       const mapped = points.map((point) => coordinates(point, time));
       for (let left = 0; left < mapped.length; left += 1) {
         for (let right = left + 1; right < mapped.length; right += 1) {
           const a = mapped[left];
           const b = mapped[right];
           const distance = Math.hypot(a.x - b.x, a.y - b.y);
-          const threshold = Math.min(width, height) * (points[left].layer === points[right].layer ? .17 : .11);
+          const sameLayer = points[left].layer === points[right].layer;
+          const threshold = Math.min(width, height) * (sameLayer ? .17 : .11);
           if (distance > threshold) continue;
           context.beginPath();
           context.moveTo(a.x, a.y);
           context.lineTo(b.x, b.y);
-          const alpha = Math.max(.018, .13 - distance / 1400);
-          const cyan = (left + right) % 7 !== 0;
-          context.strokeStyle = cyan ? `rgba(96, 230, 255, ${alpha})` : `rgba(174, 96, 255, ${alpha * .75})`;
+          const alpha = Math.max(.014, (sameLayer ? .12 : .07) - distance / 1600);
+          context.strokeStyle = `rgba(226, 228, 233, ${alpha})`;
           context.lineWidth = points[left].layer === 0 ? .55 : 1;
           context.stroke();
         }
@@ -97,11 +99,17 @@
       mapped.forEach((point, index) => {
         const accent = index % 13 === 0;
         context.beginPath();
-        context.arc(point.x, point.y, accent ? 2.8 : points[index].layer === 2 ? 1.35 : .75, 0, Math.PI * 2);
-        context.fillStyle = accent ? (index % 26 === 0 ? '#ff3ea5' : '#a6ff4d') : '#9defff';
+        context.arc(point.x, point.y, accent ? 2.6 : points[index].layer === 2 ? 1.35 : .75, 0, Math.PI * 2);
+        context.fillStyle = accent ? '#ffffff' : 'rgba(226, 228, 233, .82)';
+        if (accent) {
+          context.shadowColor = 'rgba(255, 255, 255, .55)';
+          context.shadowBlur = 7;
+        }
         context.fill();
+        context.shadowBlur = 0;
       });
 
+      /* oscilloscope interference bands — pure luminance, screen-blended */
       context.globalCompositeOperation = 'screen';
       context.lineWidth = 1;
       for (let band = 0; band < 4; band += 1) {
@@ -110,7 +118,7 @@
           const y = height * (.2 + band * .18) + Math.sin(x * .006 + time * (.34 + band * .06) + band) * (22 + band * 8);
           x === -20 ? context.moveTo(x, y) : context.lineTo(x, y);
         }
-        context.strokeStyle = band === 2 ? 'rgba(163, 69, 255, .13)' : 'rgba(57, 227, 255, .09)';
+        context.strokeStyle = band === 2 ? 'rgba(255, 255, 255, .07)' : 'rgba(255, 255, 255, .045)';
         context.stroke();
       }
       context.globalCompositeOperation = 'source-over';
