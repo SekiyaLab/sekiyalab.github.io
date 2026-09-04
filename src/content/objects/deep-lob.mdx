@@ -1,0 +1,63 @@
+---
+title: When overlapping windows invent predictability
+number: SK-S-01
+type: study
+area: M&S
+date: 2026-08-02
+status: accepted
+origin: Portfolio
+question: Can a model look predictive when the signal is fake?
+summary: A DeepLOB-style market model trained on overlapping windows scored "predictive" on null data — until the evaluation boundary was purged.
+repo: https://github.com/SekiyaLab/deep-lob
+limits:
+  - Does not establish tradability, profit, or a real market signal.
+  - Shows how a flawed test can manufacture confidence on synthetic null data.
+related:
+  - trace-npm
+---
+
+import Numerals from '../../components/Numerals.astro';
+import Plate from '../../components/Plate.astro';
+import LeakagePlate from '../../components/figures/LeakagePlate.astro';
+
+Many market models train on overlapping slices of the same timeline. If near-duplicates appear in both training and validation, the model can seem predictive because it has effectively seen the answer already.
+
+## Human
+
+Take a market-prediction architecture and train it on data with **no signal at all** — a synthetic null. Evaluate it the way much of the literature does: random splits over overlapping windows. The model "predicts". Its accuracy says the data contained structure. The data contained none.
+
+Now change exactly one thing — the evaluation boundary: purge windows that overlap the training set, embargo a gap around them. The apparent predictability collapses to chance. Same model, same null data, different boundary.
+
+## Technical
+
+The study trains a DeepLOB-style architecture on synthetic limit-order-book-like sequences generated to carry no predictive signal. Two evaluation protocols are run against identical trained models:
+
+1. **Random split** — windows are shuffled and split uniformly. Because each window overlaps its neighbours, near-identical sequences appear on both sides of the boundary.
+2. **Purged + embargoed** — any validation window whose time range intersects a training window is removed, and a margin around the boundary is dropped entirely.
+
+The leak is measured directly: pairwise overlap between train and validation windows is 1.00 under the random split and 0.00 after purging — and the predictive score moves with it.
+
+<Numerals
+  items={[
+    { value: '1.00', label: 'overlap · random split', accent: true },
+    { value: '0.00', label: 'overlap · purged + embargoed' },
+    { value: 'null', label: 'signal in the data, by construction' },
+  ]}
+/>
+
+<Plate
+  no="01"
+  title="The boundary manufactures the confidence"
+  state={'days: 500\nhop: 5\nwindow: 60 (adjustable)\nembargo: 10\nprotocol: random_split | purged+embargoed\noverlap: computed live from window geometry'}
+  caption="A toy reconstruction of the mechanism, computed live: 500 days of overlapping windows, one deterministic split. Amber validation windows intersect a training window. <strong>Drag the window length; switch the protocol; watch the overlap ratio.</strong>"
+>
+  <LeakagePlate />
+</Plate>
+
+## Full
+
+**Construction.** Synthetic book dynamics with no exploitable conditional structure: $E[y \mid X] = E[y]$. Any measured predictability is therefore an artifact of the evaluation, by construction.
+
+**What is measured.** Train/validation window overlap as a ratio in $[0, 1]$; classification metrics under both protocols on identical model weights.
+
+**Negative control.** This is a negative-control study: the null is known in advance, so any positive result localises the flaw to the protocol rather than the data.

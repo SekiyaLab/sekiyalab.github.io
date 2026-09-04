@@ -1,0 +1,195 @@
+---
+/* trace-npm recorded capture — a scrubbable syscall trace.
+ * Recorded once against a planted postinstall payload; replayed here as
+ * data. The time axis reveals events up to t.
+ */
+---
+
+<div class="trace" data-trace>
+  <div class="trace-head mono">
+    <span data-trace-readout>t · 0ms — 0 / 0 events</span>
+    <span class="mono-faint">recorded capture · replayed locally</span>
+  </div>
+  <div class="time-axis trace-axis">
+    <span class="mono mono-faint" aria-hidden="true">0ms</span>
+    <div
+      class="time-track"
+      data-trace-track
+      role="slider"
+      tabindex="0"
+      aria-label="Trace time axis — drag or use arrow keys to replay the recorded capture"
+      aria-valuemin="0"
+      aria-valuemax="300"
+      aria-valuenow="0"
+      aria-valuetext="0 milliseconds"
+    >
+      <div class="time-fill" data-trace-fill></div>
+      <div class="time-handle" data-trace-handle></div>
+    </div>
+    <span class="mono mono-faint" aria-hidden="true">300ms</span>
+  </div>
+  <ol class="trace-list mono" data-trace-list aria-live="polite" tabindex="0" aria-label="Recorded syscall events"></ol>
+  <div class="trace-counts mono" data-trace-counts></div>
+</div>
+
+<style>
+  .trace-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+  .trace-axis { margin-bottom: 16px; }
+  .trace-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 11.5px;
+    letter-spacing: 0.02em;
+    line-height: 1.5;
+    max-height: 320px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--hair-2) transparent;
+  }
+  .trace-list li {
+    display: flex;
+    gap: 14px;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--hair);
+    color: var(--ink-3);
+    opacity: 0.18;
+    transition: opacity 240ms var(--ease-ui);
+  }
+  .trace-list li.seen { opacity: 1; }
+  .trace-list li .t { flex: 0 0 6ch; color: var(--ink-4); font-variant-numeric: tabular-nums; }
+  .trace-list li .kind { flex: 0 0 7ch; text-transform: uppercase; font-size: 9px; letter-spacing: 0.14em; padding-top: 2px; }
+  .trace-list li.k-read .kind { color: var(--spectral); }
+  .trace-list li.k-spawn .kind { color: var(--ink-2); }
+  .trace-list li.k-net .kind { color: var(--amber); }
+  .trace-list li .detail { overflow-wrap: anywhere; }
+  .trace-list li.flag { color: var(--ink); }
+  .trace-list li.flag .detail { color: var(--amber); }
+  .trace-counts {
+    margin-top: 14px;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .trace-counts strong { color: var(--amber); font-weight: 400; }
+</style>
+
+<script>
+  interface TraceEvent { t: number; kind: 'read' | 'spawn' | 'net'; detail: string; flag?: boolean }
+
+  const EVENTS: TraceEvent[] = [
+    { t: 0, kind: 'spawn', detail: 'sh -c node ./install.js' },
+    { t: 3, kind: 'read', detail: '/usr/lib/node_modules/npm/package.json' },
+    { t: 6, kind: 'read', detail: './package.json' },
+    { t: 9, kind: 'spawn', detail: 'node ./install.js (pid 4172)' },
+    { t: 12, kind: 'read', detail: 'process.env — npm_config_* · HOME · PATH' },
+    { t: 15, kind: 'read', detail: '~/.npmrc' },
+    { t: 18, kind: 'net', detail: 'resolve registry.npmjs.org' },
+    { t: 24, kind: 'read', detail: '~/.ssh/ — directory listing' },
+    { t: 27, kind: 'read', detail: '~/.ssh/config' },
+    { t: 33, kind: 'read', detail: '~/.gitconfig' },
+    { t: 41, kind: 'read', detail: '~/.ssh/id_rsa — 1,679 bytes (decoy key)', flag: true },
+    { t: 47, kind: 'read', detail: '~/.aws/credentials — not present' },
+    { t: 52, kind: 'read', detail: '/etc/passwd' },
+    { t: 58, kind: 'spawn', detail: 'curl -s -X POST (child of pid 4172)' },
+    { t: 63, kind: 'net', detail: 'resolve webhook-relay.example.net' },
+    { t: 71, kind: 'net', detail: 'tcp 203.0.113.88:443 — TLS ClientHello' },
+    { t: 78, kind: 'net', detail: 'POST /collect — 2,048 bytes out', flag: true },
+    { t: 96, kind: 'read', detail: './node_modules/.package-lock.json' },
+    { t: 110, kind: 'spawn', detail: 'rm -f /tmp/.x11-lock (cleanup)' },
+    { t: 128, kind: 'net', detail: 'connection closed — 2,412 bytes total out' },
+    { t: 154, kind: 'read', detail: './README.md' },
+    { t: 190, kind: 'spawn', detail: 'exit 0 — install reported success' },
+    { t: 240, kind: 'read', detail: 'tracer: 0 writes outside package dir observed' },
+    { t: 300, kind: 'read', detail: 'tracer: capture sealed — 24 events, 2 flagged' },
+  ];
+
+  const T_MAX = 300;
+
+  function bootTraces() {
+    document.querySelectorAll<HTMLElement>('[data-trace]').forEach((root) => {
+      if (root.dataset.boot) return;
+      root.dataset.boot = '1';
+
+      const list = root.querySelector<HTMLOListElement>('[data-trace-list]')!;
+      const track = root.querySelector<HTMLElement>('[data-trace-track]')!;
+      const fill = root.querySelector<HTMLElement>('[data-trace-fill]')!;
+      const handle = root.querySelector<HTMLElement>('[data-trace-handle]')!;
+      const readout = root.querySelector<HTMLElement>('[data-trace-readout]')!;
+      const counts = root.querySelector<HTMLElement>('[data-trace-counts]')!;
+
+      const items = EVENTS.map((ev) => {
+        const li = document.createElement('li');
+        li.className = `k-${ev.kind}${ev.flag ? ' flag' : ''}`;
+        li.innerHTML = `<span class="t">${ev.t}ms</span><span class="kind">${ev.kind}</span><span class="detail"></span>`;
+        li.querySelector<HTMLElement>('.detail')!.textContent = ev.detail;
+        list.appendChild(li);
+        return li;
+      });
+
+      function render(t: number) {
+        let seen = 0;
+        let flagged = 0;
+        EVENTS.forEach((ev, i) => {
+          const on = ev.t <= t;
+          items[i].classList.toggle('seen', on);
+          if (on) {
+            seen++;
+            if (ev.flag) flagged++;
+          }
+        });
+        readout.textContent = `t · ${t}ms — ${seen} / ${EVENTS.length} events`;
+        counts.innerHTML = seen
+          ? `${seen} events · <strong>${flagged} flagged</strong> · reads ${EVENTS.filter((e) => e.t <= t && e.kind === 'read').length} · spawns ${EVENTS.filter((e) => e.t <= t && e.kind === 'spawn').length} · net ${EVENTS.filter((e) => e.t <= t && e.kind === 'net').length}`
+          : 'drag the time axis';
+        const pct = (t / T_MAX) * 100;
+        fill.style.width = `${pct}%`;
+        handle.style.left = `${pct}%`;
+        track.setAttribute('aria-valuenow', String(t));
+        track.setAttribute('aria-valuetext', `${t} milliseconds, ${seen} of ${EVENTS.length} events`);
+        const last = items.filter((el) => el.classList.contains('seen')).pop();
+        last?.scrollIntoView({ block: 'nearest' });
+      }
+
+      let dragging = false;
+      function fromEvent(e: PointerEvent) {
+        const rect = track.getBoundingClientRect();
+        const ratio = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+        render(Math.round(ratio * T_MAX));
+      }
+      track.addEventListener('pointerdown', (e) => {
+        dragging = true;
+        track.classList.add('dragging');
+        track.setPointerCapture(e.pointerId);
+        fromEvent(e);
+      });
+      track.addEventListener('pointermove', (e) => dragging && fromEvent(e));
+      track.addEventListener('pointerup', () => {
+        dragging = false;
+        track.classList.remove('dragging');
+      });
+      track.addEventListener('keydown', (e) => {
+        const now = parseInt(track.getAttribute('aria-valuenow') ?? '0', 10);
+        const delta = e.shiftKey ? 50 : 10;
+        if (e.key === 'ArrowLeft') { e.preventDefault(); render(Math.max(0, now - delta)); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); render(Math.min(T_MAX, now + delta)); }
+      });
+
+      render(78); /* open at the moment the decoy key is read */
+    });
+  }
+  bootTraces();
+  document.addEventListener('astro:page-load', bootTraces);
+</script>

@@ -1,0 +1,64 @@
+---
+title: Evidence that exists and cannot be retrieved
+number: R-002
+type: finding
+area: S&S
+date: 2026-08-17
+status: accepted
+origin: Ghalvera
+question: When does a tool's silence stop meaning absence?
+summary: A successful empty audit query did not establish an empty record — 192 records sat in the log the whole time.
+repo: https://github.com/SekiyaLab/systems-security-core
+limits:
+  - Established on one Fedora 44 guest, kernel 6.19.10 aarch64, under virtualisation; not established for x86-64 or bare metal.
+  - Speaks to ausearch's retrieval semantics, not to auditd's collection reliability.
+related:
+  - trace-npm
+---
+
+import Numerals from '../../components/Numerals.astro';
+import Plate from '../../components/Plate.astro';
+import AuditPlate from '../../components/figures/AuditPlate.astro';
+
+A Linux audit tool reported nothing. The log contained 192 records.
+
+## Human
+
+192 Linux Audit records carrying a deliberate key sat in `/var/log/audit/audit.log`. `ausearch -k` returned *no matches* for all of them — with a time bound, without one, and with a successful exit status. No error, no warning.
+
+<Numerals
+  items={[
+    { value: '0', label: 'query matches · exit 0' },
+    { value: '186', label: 'parsed records' },
+    { value: '192', label: 'raw keyed lines', accent: true },
+  ]}
+/>
+
+A collection failure is loud: the log is empty and anyone who looks sees it. A retrieval failure is silent and self-confirming. The evidence is on disk, the standard tool says there is none, every follow-up query through that tool agrees, and nothing suggests checking the raw log. An investigator closes the case with the contradicting data sitting right there.
+
+## Technical
+
+The experiment planted a controlled key, generated known events, then queried through the canonical path. The canonical query returned no matches and exited successfully; reading the configured log explicitly recovered every record.
+
+<Plate
+  no="01"
+  title="Two views of one evidence source"
+  state={'query: ausearch -k specimen\nresult: no matches (exit 0)\n\npath: /var/log/audit/audit.log\nraw keyed lines: 192\nparsed records: 186\nhost: fedora-44-guest · kernel 6.19.10 · aarch64'}
+  caption="The canonical retrieval path and the raw log, drawn to the same scale. <strong>Same host, same moment, same evidence source.</strong> The empty lane is not an empty record."
+>
+  <AuditPlate />
+</Plate>
+
+Three candidate causes were tested and eliminated first: the distribution's default `-a never,task` rule, a missing `audit=1` kernel argument, and the architecture filter. Clock skew and time windows were ruled out. Subject execution was verified rather than assumed.
+
+The cause, when found, was almost embarrassingly plain: `ausearch` reads standard input unless given `--input-logs`. With no input it reaches end-of-file immediately and reports an absence of matches rather than an absence of input — exit status 0. Confirmed against the tool's own manual page.
+
+The first published version of this finding concluded the opposite — that audit had recorded nothing — by inferring absence from the tool's silence. That is the same mistake the finding is about, so the wrong version stayed in the history rather than being edited away.
+
+## Full
+
+**Method.** Owned guest system; controlled audit key; ground truth preserved independently of the tool under test. Candidates eliminated in order: default suppression rules, kernel boot parameter, architecture filter, clock skew, time windows.
+
+**Resolution.** `ausearch(8)`: without `--input-logs`, input is standard input; EOF on stdin yields "no matches" with exit status 0. The failure is in the interface's semantics, not in the log.
+
+**Scope.** One Fedora 44 guest, kernel 6.19.10, aarch64, under virtualisation. Not established beyond that configuration.

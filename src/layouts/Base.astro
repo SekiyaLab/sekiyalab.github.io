@@ -1,0 +1,105 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import '../styles/tokens.css';
+import '../styles/base.css';
+import 'katex/dist/katex.min.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  objectCount?: number;
+}
+
+const {
+  title,
+  description = 'Sekiya is an independent institute for computer science, mathematics and computational experimentation.',
+  objectCount = 0,
+} = Astro.props;
+
+const path = Astro.url.pathname;
+const build = import.meta.env.GITHUB_SHA?.slice(0, 7) ?? 'dev';
+const year = new Date().getUTCFullYear();
+
+const nav = [
+  { href: '/', label: 'Index' },
+  { href: '/study/', label: 'Study' },
+  { href: '/journal/', label: 'Journal' },
+  { href: '/institute/', label: 'Institute' },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0a0b0d" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fonts/newsreader-display-300.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/newsreader-text-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/dm-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <ClientRouter />
+  </head>
+  <body data-objects={objectCount}>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header shell">
+      <div class="status-line">
+        <a class="wordmark" href="/">Sekiya<span class="wordmark-sub">INSTITUTE</span></a>
+        <div class="status-meta mono mono-dim" aria-hidden="true">
+          <span>Madrid</span>
+          <span data-utc-clock>--:-- UTC</span>
+          <span data-object-count>{objectCount} objects</span>
+          <span data-field-status><span class="dot paused"></span>Field · idle</span>
+        </div>
+        <nav class="site-nav" aria-label="Primary">
+          {
+            nav.map((item) => (
+              <a
+                href={item.href}
+                aria-current={
+                  item.href === '/'
+                    ? path === '/'
+                      ? 'page'
+                      : undefined
+                    : path.startsWith(item.href)
+                      ? 'page'
+                      : undefined
+                }
+              >
+                {item.label}
+              </a>
+            ))
+          }
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <p class="footer-creed">
+        Curiosity is the motive. <strong>Experiment is the method.</strong> Understanding is the reward.
+      </p>
+      <div class="footer-grid">
+        <a href="https://github.com/SekiyaLab" target="_blank" rel="noreferrer">GitHub ↗</a>
+        <a href="https://www.npmjs.com/package/trace-npm" target="_blank" rel="noreferrer">trace-npm on npm ↗</a>
+        <a href="https://joshuadefreitas.github.io" target="_blank" rel="noreferrer">Joshua de Freitas ↗</a>
+        <a href="https://ghalvera.github.io" target="_blank" rel="noreferrer">Ghalvera (archive) ↗</a>
+        <span class="spacer"></span>
+        <span>© {year} Sekiya Institute</span>
+      </div>
+      <p class="colophon" data-colophon>
+        build {build} · set in Newsreader &amp; DM Mono · the field on this site is computed, not recorded
+      </p>
+    </footer>
+
+    <script>
+      import '../scripts/site';
+    </script>
+  </body>
+</html>

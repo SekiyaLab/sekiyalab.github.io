@@ -1,0 +1,51 @@
+/* Sekiya — design tokens. Dark-only: the black institution. */
+
+:root {
+  /* ground */
+  --void: #0a0b0d;
+  --raised: #101215;
+  --plate: #14161a;
+  --plate-2: #191c21;
+
+  /* ink — warm off-white, lamplight. The ladder bottoms out at WCAG AA:
+     ink-4 (#7d7a72 on #0a0b0d) measures ≈4.8:1. Quieter than this, text
+     becomes decoration — and decoration uses the hairline tokens. */
+  --ink: #ece9e2;
+  --ink-2: #a8a49b;
+  --ink-3: #8a8780;
+  --ink-4: #7d7a72;
+
+  /* hairlines */
+  --hair: rgba(236, 233, 226, 0.07);
+  --hair-2: rgba(236, 233, 226, 0.14);
+  --hair-3: rgba(236, 233, 226, 0.24);
+
+  /* accents — used at ~2% dosage */
+  --amber: #d9a45b;
+  --amber-dim: rgba(217, 164, 91, 0.55);
+  --amber-hair: rgba(217, 164, 91, 0.28);
+  --spectral: #8fa8e8;
+  --spectral-dim: rgba(143, 168, 232, 0.55);
+
+  /* type */
+  --serif-display: 'Newsreader Display', ui-serif, Georgia, 'Times New Roman', serif;
+  --serif: 'Newsreader Text', ui-serif, Georgia, 'Times New Roman', serif;
+  --serif-italic: 'Newsreader Italic', 'Newsreader Text', ui-serif, Georgia, serif;
+  --mono: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* layout */
+  --shell: 1480px;
+  --measure: 68ch;
+  --gutter: max(24px, calc((100vw - var(--shell)) / 2));
+  --rail: 200px;
+  --section-y: clamp(80px, 10vw, 150px);
+
+  /* motion */
+  --ease-ui: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --t-fast: 160ms;
+  --t-med: 320ms;
+  --t-slow: 560ms;
+
+  color-scheme: dark;
+}

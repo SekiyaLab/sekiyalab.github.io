@@ -1,0 +1,290 @@
+---
+import { PRESETS } from '../scripts/field/grayscott';
+
+interface Props {
+  seed?: number;
+  preset?: string;
+  statement?: boolean;
+  height?: 'hero' | 'plate';
+}
+
+const { seed = 20260904, preset = 'coral', statement = true, height = 'hero' } = Astro.props;
+---
+
+<div class:list={['field-hero', height === 'plate' && 'field-plate']} data-field-root>
+  <canvas
+    class="field-canvas"
+    data-field-canvas
+    role="img"
+    aria-label="A live Gray–Scott reaction–diffusion simulation. Patterns of a chemical system spread, split and stabilise. Deterministic: replaying the same seed reproduces the same pattern."
+    data-seed={seed}
+    data-preset={preset}
+    data-height={height}
+  ></canvas>
+  <div class="field-fallback" data-field-fallback hidden>
+    FIELD OFFLINE — WEBGL2 UNAVAILABLE · THE SIMULATION REQUIRES A GPU CONTEXT
+  </div>
+
+  <div class="field-overlay">
+    {
+      statement && (
+        <div class="overlay-top">
+          <p class="hero-kicker"><span class="dot" aria-hidden="true" />Sekiya Institute — Madrid</p>
+          <h1 class="hero-statement" data-hero-statement>
+            An independent institute for <em>computer science</em>, <em>mathematics</em> and{' '}
+            <em>computational experimentation</em>.
+          </h1>
+        </div>
+      )
+    }
+
+    <div class="field-console" data-field-console>
+      <div class="readout">
+        <span class="r-label">Field</span>
+        <span class="r-value">Gray–Scott · <span data-r-preset>{preset}</span></span>
+      </div>
+      <div class="readout">
+        <span class="r-label">Step</span>
+        <span class="r-value" data-r-step>0</span>
+      </div>
+      <div class="readout">
+        <span class="r-label">Checksum</span>
+        <span class="r-value" data-r-checksum>00000000</span>
+      </div>
+
+      <div class="field-controls" role="group" aria-label="Simulation presets">
+        {
+          PRESETS.map((p) => (
+            <button
+              type="button"
+              class:list={['ctl', p.name === preset && 'active']}
+              data-preset={p.name}
+              aria-pressed={p.name === preset ? 'true' : 'false'}
+            >
+              {p.label}
+            </button>
+          ))
+        }
+      </div>
+
+      <form class="seed-form" data-seed-form>
+        <input
+          type="text"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          maxlength="10"
+          value={String(seed)}
+          aria-label="Simulation seed"
+          data-seed-input
+        />
+        <button type="submit" class="ctl">Seed</button>
+      </form>
+
+      <div class="field-controls">
+        <button type="button" class="ctl" data-replay title="Re-run from step zero with the same seed">Replay</button>
+        <button type="button" class="ctl" data-newseed title="Run a different seed">New seed</button>
+        <button type="button" class="ctl" data-pause aria-pressed="false" title="Pause or resume the simulation">Pause</button>
+      </div>
+
+      <div class="time-axis">
+        <span class="mono mono-faint" aria-hidden="true">T−0</span>
+        <div
+          class="time-track"
+          data-time-track
+          role="slider"
+          tabindex="0"
+          aria-label="Simulation time axis — drag or use arrow keys to scrub the computation"
+          aria-valuemin="0"
+          aria-valuemax="0"
+          aria-valuenow="0"
+          aria-valuetext="step 0"
+        >
+          <div class="time-fill" data-time-fill></div>
+          <div class="time-handle" data-time-handle></div>
+        </div>
+        <span class="time-readout" data-time-readout>t · 0</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { GrayScottField, PRESETS } from '../scripts/field/grayscott';
+
+  interface Root extends HTMLElement {}
+
+  const roots = new WeakSet<Root>();
+
+  function initField(root: Root) {
+    if (roots.has(root)) return;
+    roots.add(root);
+
+    const canvas = root.querySelector<HTMLCanvasElement>('[data-field-canvas]')!;
+    const fallback = root.querySelector<HTMLElement>('[data-field-fallback]')!;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const coarse = window.matchMedia('(pointer: coarse)').matches;
+
+    /* instrument readouts — bound before construction: the engine emits
+       its first state synchronously from the constructor. */
+    const rStep = root.querySelector<HTMLElement>('[data-r-step]')!;
+    const rChecksum = root.querySelector<HTMLElement>('[data-r-checksum]')!;
+    const rPreset = root.querySelector<HTMLElement>('[data-r-preset]')!;
+    const track = root.querySelector<HTMLElement>('[data-time-track]')!;
+    const fill = root.querySelector<HTMLElement>('[data-time-fill]')!;
+    const handle = root.querySelector<HTMLElement>('[data-time-handle]')!;
+    const timeReadout = root.querySelector<HTMLElement>('[data-time-readout]')!;
+    const pauseBtn = root.querySelector<HTMLButtonElement>('[data-pause]')!;
+    const seedInput = root.querySelector<HTMLInputElement>('[data-seed-input]')!;
+
+    let lastPaintedStep = -1;
+    function update(s: {
+      step: number; seed: number; preset: string; checksum: string;
+      running: boolean; maxScrubStep: number;
+    }) {
+      if (s.step === lastPaintedStep) return;
+      lastPaintedStep = s.step;
+      rStep.textContent = String(s.step);
+      rChecksum.textContent = s.checksum;
+      rPreset.textContent = s.preset;
+      const max = Math.max(s.maxScrubStep, s.step, 1);
+      track.setAttribute('aria-valuemax', String(max));
+      track.setAttribute('aria-valuenow', String(s.step));
+      track.setAttribute('aria-valuetext', `step ${s.step}`);
+      if (!track.classList.contains('dragging')) {
+        const pct = (s.step / max) * 100;
+        fill.style.width = `${pct}%`;
+        handle.style.left = `${pct}%`;
+        timeReadout.textContent = `t · ${s.step}`;
+      }
+      pauseBtn.textContent = s.running ? 'Pause' : 'Run';
+      pauseBtn.setAttribute('aria-pressed', s.running ? 'false' : 'true');
+      document.dispatchEvent(
+        new CustomEvent('sekiya:field', { detail: { running: s.running } }),
+      );
+    }
+
+    let field: GrayScottField | null = null;
+    try {
+      field = new GrayScottField(canvas, {
+        seed: parseInt(canvas.dataset.seed ?? '20260904', 10),
+        preset: canvas.dataset.preset,
+        size: coarse || canvas.clientWidth < 720 ? 192 : 256,
+        onState: (s) => update(s),
+      });
+    } catch (err) {
+      console.error('[sekiya] field failed to initialise:', err);
+      canvas.hidden = true;
+      fallback.hidden = false;
+      return;
+    }
+    const f = field!;
+
+    /* controls */
+    root.querySelectorAll<HTMLButtonElement>('[data-preset]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        root.querySelectorAll('[data-preset]').forEach((b) => {
+          b.classList.toggle('active', b === btn);
+          b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+        });
+        f.setPreset(btn.dataset.preset!);
+        if (!reduced) f.start();
+      });
+    });
+
+    root.querySelector('[data-seed-form]')!.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const v = parseInt(seedInput.value.replace(/\D/g, ''), 10);
+      if (Number.isFinite(v)) f.replay(v);
+      seedInput.value = String(f.currentSeed);
+      if (!reduced) f.start();
+    });
+
+    root.querySelector('[data-replay]')!.addEventListener('click', () => {
+      f.replay();
+      if (!reduced) f.start();
+    });
+
+    root.querySelector('[data-newseed]')!.addEventListener('click', () => {
+      const seed = f.newSeed();
+      seedInput.value = String(seed);
+      if (!reduced) f.start();
+    });
+
+    pauseBtn.addEventListener('click', () => {
+      if (f.isRunning) f.stop();
+      else f.start();
+    });
+
+    /* the time axis — scrub the computation */
+    let dragging = false;
+    function scrubFromEvent(e: PointerEvent) {
+      const rect = track.getBoundingClientRect();
+      const ratio = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+      const max = Math.max(f.maxScrubStep(), f.step, 1);
+      const target = Math.round(ratio * max);
+      const pct = (target / max) * 100;
+      fill.style.width = `${pct}%`;
+      handle.style.left = `${pct}%`;
+      timeReadout.textContent = `t · ${target}`;
+      f.scrubTo(target);
+    }
+    track.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      track.classList.add('dragging');
+      track.setPointerCapture(e.pointerId);
+      scrubFromEvent(e);
+    });
+    track.addEventListener('pointermove', (e) => {
+      if (dragging) scrubFromEvent(e);
+    });
+    track.addEventListener('pointerup', () => {
+      dragging = false;
+      track.classList.remove('dragging');
+    });
+    track.addEventListener('keydown', (e) => {
+      const delta = e.shiftKey ? 256 : 64;
+      if (e.key === 'ArrowLeft') { e.preventDefault(); f.scrubTo(f.step - delta); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); f.scrubTo(f.step + delta); }
+    });
+
+    /* lifecycle: start immediately; IO only pauses when fully offscreen */
+    f.resize();
+    f.run();
+    if (!reduced) f.start();
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          f.resize();
+          f.run();
+          if (!reduced) f.start();
+        } else {
+          f.stop();
+          f.halt();
+        }
+      },
+      { threshold: 0.02 },
+    );
+    io.observe(canvas);
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) { f.stop(); f.halt(); }
+      else { f.run(); if (!reduced) f.start(); }
+    });
+
+    window.addEventListener('resize', () => f.resize());
+
+    if (reduced) {
+      /* reduced motion: fast-forward once to a developed pattern, then hold */
+      f.scrubTo(1400);
+    }
+
+    document.addEventListener('astro:before-swap', () => f.destroy(), { once: true });
+  }
+
+  function boot() {
+    document.querySelectorAll<Root>('[data-field-root]').forEach(initField);
+  }
+  boot();
+  document.addEventListener('astro:page-load', boot);
+</script>

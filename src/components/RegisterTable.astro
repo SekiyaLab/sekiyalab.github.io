@@ -1,0 +1,70 @@
+---
+import { TYPE_PREFIX, AREA_LABEL } from '../content.config';
+
+interface EntryLike {
+  id: string;
+  data: {
+    title: string;
+    number: string;
+    type: string;
+    area: string;
+    date: Date;
+    status?: string;
+    origin?: string;
+    summary: string;
+  };
+}
+
+interface Props {
+  entries: EntryLike[];
+  caption?: boolean;
+}
+
+const { entries, caption = true } = Astro.props;
+
+const sorted = [...entries].sort((a, b) => +b.data.date - +a.data.date);
+
+const fmt = (d: Date) =>
+  `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+---
+
+<table class="register" data-register>
+  <thead>
+    <tr>
+      <th class="sortable" data-sort="no" scope="col">No</th>
+      <th scope="col" class="r-type">Type</th>
+      <th scope="col">Object</th>
+      <th scope="col" class="r-area">Area</th>
+      <th class="sortable r-date" data-sort="date" scope="col">Date <span class="sort-mark">↓</span></th>
+      <th scope="col" class="r-status">State</th>
+    </tr>
+  </thead>
+  <tbody>
+    {
+      sorted.map((entry) => {
+        const prefix = TYPE_PREFIX[entry.data.type];
+        const href = `/${prefix}/${entry.id}/`;
+        return (
+          <tr
+            data-area={entry.data.area}
+            data-date={entry.data.date.toISOString().slice(0, 10)}
+            data-no={entry.data.number}
+            class:list={[entry.data.status === undefined && 'is-dim']}
+          >
+            <td class="r-no">{entry.data.number}</td>
+            <td class="r-type">{entry.data.type}</td>
+            <td class="r-title">
+              <a href={href}>{entry.data.title}</a>
+            </td>
+            <td class="r-area" title={AREA_LABEL[entry.data.area]}>{entry.data.area}</td>
+            <td class="r-date">{fmt(entry.data.date)}</td>
+            <td class="r-status">{entry.data.status ?? '—'}</td>
+          </tr>
+        );
+      })
+    }
+  </tbody>
+</table>
+{caption && (
+  <p class="register-caption" data-register-caption>{sorted.length} objects · all areas</p>
+)}

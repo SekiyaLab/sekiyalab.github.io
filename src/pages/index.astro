@@ -1,0 +1,200 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Field from '../components/Field.astro';
+import RegisterTable from '../components/RegisterTable.astro';
+import { AREA_LABEL } from '../content.config';
+
+const objects = await getCollection('objects', ({ data }) => !data.draft);
+const questions = await getCollection('questions');
+const notes = objects
+  .filter((o) => o.data.type === 'note')
+  .sort((a, b) => +b.data.date - +a.data.date)
+  .slice(0, 3);
+
+const sortedQuestions = [...questions].sort((a, b) => a.data.order - b.data.order);
+
+const areas = [
+  {
+    code: 'M&S',
+    line: 'Model systems under change: releases, drift, delayed feedback, point-in-time truth — and mathematically interesting toy systems along the way.',
+  },
+  {
+    code: 'S&S',
+    line: 'What a system’s own record of events does and does not prove about what actually happened.',
+  },
+  {
+    code: 'AGT',
+    line: 'Whether an agent’s account of its own work can be trusted, and how you would know. An honest empty shelf — for now.',
+  },
+  {
+    code: 'CMP',
+    line: 'Deterministic, reproducible, inspectable computation: what you see is provably what was computed.',
+  },
+];
+
+const areaCounts = areas.map((a) => ({
+  ...a,
+  count: objects.filter((o) => o.data.area === a.code && o.data.type !== 'note').length,
+}));
+
+const questionMeta = (q: (typeof questions)[number]) => {
+  const n = (q.data.objects ?? []).length + (q.data.repos ?? []).length;
+  return `${q.data.areas.join(' + ')} · ${n} ${n === 1 ? 'object' : 'objects'}`;
+};
+
+const fmt = (d: Date) =>
+  `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+---
+
+<Base title="Sekiya — Institute for computational experimentation" objectCount={objects.length}>
+  <Field seed={20260904} preset="coral" statement={true} />
+
+  <!-- enter through a question -->
+  <section class="section question-rail shell" aria-label="Questions">
+    <p class="kicker reveal">Enter through a question</p>
+    <ol class="question-list">
+      {
+        sortedQuestions.map((q, i) => (
+          <li class="reveal">
+            <a class="question-link" href={`/q/${q.id}/`}>
+              <span class="q-index">Q{String(i + 1).padStart(2, '0')}</span>
+              <span class="q-text">{q.data.question}</span>
+              <span class="q-meta">{questionMeta(q)}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <!-- the register -->
+  <section class="section shell" id="register" aria-label="The register">
+    <p class="kicker reveal">The register</p>
+    <div class="lens-row reveal" role="group" aria-label="Filter by area">
+      <button type="button" class="lens" data-lens="all" aria-pressed="true">
+        All<span class="lens-count">{objects.filter((o) => o.data.type !== 'note').length}</span>
+      </button>
+      {
+        areaCounts.map((a) => (
+          <button type="button" class="lens" data-lens={a.code} aria-pressed="false">
+            {a.code}
+            <span class="lens-count">{a.count}</span>
+          </button>
+        ))
+      }
+    </div>
+    <div class="reveal">
+      <RegisterTable entries={objects.filter((o) => o.data.type !== 'note')} />
+    </div>
+  </section>
+
+  <!-- areas as lenses -->
+  <section class="section shell" aria-label="Research areas">
+    <p class="kicker reveal">Four loose areas — navigation, not departments</p>
+    <ul class="area-list">
+      {
+        areaCounts.map((a) => (
+          <li class="reveal">
+            <span class="a-code">{a.code} · {a.count} {a.count === 1 ? 'object' : 'objects'}</span>
+            <h3>{AREA_LABEL[a.code]}</h3>
+            <p>{a.line}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- study teaser -->
+  <section class="section shell" aria-label="Study">
+    <p class="kicker reveal">Study — the notebook shelf</p>
+    <div class="study-teaser reveal">
+      <h3>Notebooks you can <em>play</em>.</h3>
+      <p>
+        Study is Sekiya's optional learning surface: visual explanations, rebuilds of mechanisms from
+        scratch, simulations and deep dives — opened when curiosity strikes, never on a schedule. The
+        shelf is being stocked. The first notebook takes the field on this page apart until you could
+        rebuild it.
+      </p>
+      <a class="text-link" href="/study/">Open the shelf →</a>
+    </div>
+  </section>
+
+  <!-- journal -->
+  <section class="section shell" aria-label="Journal">
+    <p class="kicker reveal">Journal — transmissions</p>
+    <ul class="journal-list">
+      {
+        notes.map((note) => (
+          <li class="reveal">
+            <span class="j-date">{fmt(note.data.date)}</span>
+            <span class="j-title">
+              <a href={`/n/${note.id}/`}>{note.data.title}</a>
+            </span>
+            <span class="j-line">{note.data.summary}</span>
+          </li>
+        ))
+      }
+    </ul>
+    <p style="margin-top: 22px;" class="reveal">
+      <a class="text-link" href="/journal/">All transmissions →</a>
+    </p>
+  </section>
+</Base>
+
+<script>
+  /* Motion moments — hero statement and question rail. Loaded after idle,
+     skipped entirely under reduced motion. Elements are visible by default;
+     GSAP only ever animates *toward* the natural state. */
+  async function bootMotion() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const [{ gsap }, { SplitText }] = await Promise.all([
+      import('gsap'),
+      import('gsap/SplitText'),
+    ]);
+
+    const statement = document.querySelector('[data-hero-statement]');
+    if (statement && !statement.dataset.split) {
+      const split = new SplitText(statement, { type: 'words' });
+      gsap.from(split.words, {
+        y: 16,
+        opacity: 0,
+        duration: 0.9,
+        ease: 'power3.out',
+        stagger: 0.045,
+        delay: 0.15,
+        clearProps: 'all',
+      });
+    }
+
+    const links = document.querySelectorAll('.question-link');
+    if (links.length) {
+      const io = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) return;
+          io.disconnect();
+          gsap.from(links, {
+            opacity: 0,
+            y: 18,
+            duration: 0.7,
+            ease: 'power2.out',
+            stagger: 0.09,
+            clearProps: 'all',
+          });
+        },
+        { rootMargin: '0px 0px -12% 0px' },
+      );
+      io.observe(links[0].closest('li') ?? links[0]);
+    }
+  }
+
+  if (document.readyState === 'complete') {
+    requestIdleCallback(() => bootMotion(), { timeout: 1200 });
+  } else {
+    window.addEventListener(
+      'load',
+      () => requestIdleCallback(() => bootMotion(), { timeout: 1200 }),
+      { once: true },
+    );
+  }
+</script>

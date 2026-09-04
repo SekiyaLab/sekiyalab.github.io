@@ -1,0 +1,134 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Limits from '../../components/Limits.astro';
+import { TYPE_PREFIX, PREFIX_TYPE, AREA_LABEL } from '../../content.config';
+
+export async function getStaticPaths() {
+  const objects = await getCollection('objects', ({ data }) => !data.draft);
+  return objects.map((entry) => ({
+    params: { prefix: TYPE_PREFIX[entry.data.type], slug: entry.id },
+    props: { entry, objects },
+  }));
+}
+
+const { entry, objects } = Astro.props;
+const { Content } = await render(entry);
+
+if (!PREFIX_TYPE[Astro.params.prefix!]) return Astro.redirect('/404');
+
+const has = (marker: string) => entry.body?.includes(marker) ?? false;
+const layers = [
+  { id: 'human', label: 'Human', show: has('## Human') },
+  { id: 'technical', label: 'Technical', show: has('## Technical') },
+  { id: 'full', label: 'Full', show: has('## Full') },
+].filter((l) => l.show);
+
+const fmt = (d: Date) =>
+  `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+
+/* prev/next by date across all objects */
+const sorted = [...objects].sort((a, b) => +a.data.date - +b.data.date);
+const idx = sorted.findIndex((o) => o.id === entry.id);
+const prev = idx > 0 ? sorted[idx - 1] : null;
+const next = idx < sorted.length - 1 ? sorted[idx + 1] : null;
+const hrefFor = (o: (typeof objects)[number]) => `/${TYPE_PREFIX[o.data.type]}/${o.id}/`;
+
+const related = (entry.data.related ?? [])
+  .map((id) => objects.find((o) => o.id === id))
+  .filter(Boolean) as typeof objects;
+---
+
+<Base title={`${entry.data.title} — Sekiya`} description={entry.data.summary} objectCount={objects.length}>
+  <article>
+    <header class="object-head shell">
+      <div class="object-kicker">
+        <span class="o-no">{entry.data.number}</span>
+        <span>{entry.data.type}</span>
+        <span>{AREA_LABEL[entry.data.area]}</span>
+      </div>
+      <h1 class="object-title">{entry.data.title}</h1>
+      {entry.data.question && <p class="object-question">{entry.data.question}</p>}
+      <div class="object-meta">
+        <span>{fmt(entry.data.date)}</span>
+        {entry.data.status && <span class="m-status">{entry.data.status}</span>}
+        {entry.data.origin && <span>origin · {entry.data.origin}</span>}
+        {entry.data.seed !== undefined && <span>seed · {entry.data.seed}</span>}
+        {entry.data.repo && (
+          <a href={entry.data.repo} target="_blank" rel="noreferrer">repository ↗</a>
+        )}
+        {(entry.data.external ?? []).map((l) => (
+          <a href={l.url} target="_blank" rel="noreferrer">{l.label} ↗</a>
+        ))}
+      </div>
+    </header>
+
+    <div class="object-body shell">
+      {
+        layers.length > 0 && (
+          <aside class="object-rail" aria-label="Section">
+            <div class="rail-inner">
+              <span class="rail-no">{entry.data.number}</span>
+              {layers.map((l) => (
+                <a href={`#${l.id}`}>{l.label}</a>
+              ))}
+            </div>
+          </aside>
+        )
+      }
+
+      <div class="object-content">
+        <Content />
+
+        {entry.data.limits && <Limits limits={entry.data.limits} />}
+
+        {
+          related.length > 0 && (
+            <p class="mono mono-dim" style="margin-top: 2.4em; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;">
+              Continues to:{' '}
+              {related.map((r, i) => (
+                <>
+                  <a href={hrefFor(r)}>{r.data.title}</a>
+                  {i < related.length - 1 ? ' · ' : ''}
+                </>
+              ))}
+            </p>
+          )
+        }
+
+        <div class="repro">
+          {entry.data.number} · {entry.data.type} · {AREA_LABEL[entry.data.area]} · first published {fmt(entry.data.date)}
+          {entry.data.origin && ` · origin: ${entry.data.origin}`}
+          {entry.data.repo && (
+            <>
+              <br />source: {entry.data.repo.replace('https://github.com/', '')}
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+
+    <nav class="object-nav shell" aria-label="Adjacent objects">
+      {
+        prev ? (
+          <a href={hrefFor(prev)}>
+            <span class="nav-dir">← {prev.data.number}</span>
+            <span class="nav-title">{prev.data.title}</span>
+          </a>
+        ) : (
+          <span style="flex:1" />
+        )
+      }
+      {
+        next ? (
+          <a href={hrefFor(next)} class="next">
+            <span class="nav-dir">{next.data.number} →</span>
+            <span class="nav-title">{next.data.title}</span>
+          </a>
+        ) : (
+          <span style="flex:1" />
+        )
+      }
+    </nav>
+  </article>
+</Base>

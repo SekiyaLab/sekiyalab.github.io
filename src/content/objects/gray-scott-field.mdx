@@ -1,0 +1,43 @@
+---
+title: The field on the front page
+number: SK-C-01
+type: field
+area: CMP
+date: 2026-09-04
+status: running
+question: What is the homepage actually computing?
+summary: A Gray–Scott reaction–diffusion system, live — seeded, checksummed and scrubbable. The ornament is the computation.
+seed: 20260904
+limits:
+  - Determinism is per configuration — same seed, preset, grid size and browser build reproduce the trajectory; floating-point behaviour across browsers is not claimed.
+---
+
+The pattern on Sekiya's front page is not a video or a shader trick. It is a Gray–Scott reaction–diffusion system, computed live in your browser, and it will replay identically from its seed.
+
+## Human
+
+Two virtual chemicals spread through a grid. One feeds the other; both diffuse at different rates. From those two rules — feed, kill, diffuse, react — the system grows coral, mitosis and maze patterns that were never drawn by anyone.
+
+Drag the time axis. You are scrubbing the computation itself: backward to an earlier state, forward as it re-computes. Change the seed and the same rules grow a different world.
+
+## Technical
+
+The system integrates the Gray–Scott equations on a GPU grid, in your browser, at every visit:
+
+$$\frac{\partial u}{\partial t} = D_u \nabla^2 u - uv^2 + F(1 - u)$$
+
+$$\frac{\partial v}{\partial t} = D_v \nabla^2 v + uv^2 - (F + k)v$$
+
+The initial condition is generated from an integer seed by a deterministic PRNG. Every 64 steps the engine stores a snapshot and a 16×16 digest; the checksum shown in the console is a hash of that digest. Scrubbing backward restores the nearest snapshot and re-integrates forward — which is why replay is exact rather than approximate.
+
+import Field from '../../components/Field.astro';
+
+<Field seed={20260904} preset="coral" statement={false} height="plate" />
+
+## Full
+
+**Presets.** Coral $(F{=}0.0545, k{=}0.0620)$, Mitosis $(F{=}0.0367, k{=}0.0649)$, Maze $(F{=}0.029, k{=}0.057)$; $D_u = 0.16$, $D_v = 0.08$, $\Delta t = 1$, nine-point Laplacian.
+
+**Engine.** WebGL2 ping-pong buffers, RGBA16F where the extension exists; grid 256² on desktop, 192² on coarse-pointer devices; adaptive steps-per-frame under load.
+
+**Reproducibility.** Same seed, preset, grid size and browser build reproduce the trajectory and its checksum. Cross-browser floating-point identity is not claimed — the honest unit of determinism is one configuration.

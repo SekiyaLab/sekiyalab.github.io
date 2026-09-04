@@ -1,0 +1,223 @@
+---
+/* DeepLOB evaluation-leakage figure.
+ * A small honest toy computation: 500 trading days, sliding windows;
+ * random split vs purged + embargoed boundary. The overlap ratio is
+ * computed live from the window geometry, not pasted in.
+ */
+---
+
+<div class="leakage" data-leakage>
+  <div class="leakage-controls">
+    <div class="field-controls" role="group" aria-label="Evaluation protocol">
+      <button type="button" class="ctl active" data-protocol="random" aria-pressed="true">Random split</button>
+      <button type="button" class="ctl" data-protocol="purged" aria-pressed="false">Purged + embargoed</button>
+    </div>
+    <label class="leakage-slider mono mono-dim">
+      Window
+      <input type="range" min="20" max="120" step="5" value="60" data-window aria-label="Window length in days" />
+      <span data-window-value>60d</span>
+    </label>
+  </div>
+
+  <svg data-leakage-svg viewBox="0 0 720 210" role="img" aria-label="Timeline of training and validation windows. Under a random split, validation windows overlap training windows; purging removes the overlap."></svg>
+
+  <div class="leakage-readout mono" data-leakage-readout aria-live="polite"></div>
+</div>
+
+<style>
+  .leakage-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 24px;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+  .leakage-slider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .leakage-slider input[type='range'] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 140px;
+    height: 1px;
+    background: var(--hair-2);
+    outline-offset: 4px;
+  }
+  .leakage-slider input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 9px;
+    height: 9px;
+    background: var(--void);
+    border: 1px solid var(--amber);
+    transform: rotate(45deg);
+    cursor: ew-resize;
+  }
+  .leakage-slider input[type='range']::-moz-range-thumb {
+    width: 9px;
+    height: 9px;
+    background: var(--void);
+    border: 1px solid var(--amber);
+    transform: rotate(45deg);
+    cursor: ew-resize;
+    border-radius: 0;
+  }
+  .leakage-readout {
+    margin-top: 14px;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .leakage-readout strong { color: var(--amber); font-weight: 400; }
+</style>
+
+<script>
+  function bootLeakage() {
+    document.querySelectorAll<HTMLElement>('[data-leakage]').forEach((root) => {
+      if (root.dataset.boot) return;
+      root.dataset.boot = '1';
+
+      const svg = root.querySelector<SVGSVGElement>('[data-leakage-svg]')!;
+      const readout = root.querySelector<HTMLElement>('[data-leakage-readout]')!;
+      const slider = root.querySelector<HTMLInputElement>('[data-window]')!;
+      const windowValue = root.querySelector<HTMLElement>('[data-window-value]')!;
+      const buttons = root.querySelectorAll<HTMLButtonElement>('[data-protocol]');
+
+      const DAYS = 500;
+      const HOP = 5;
+      const EMBARGO = 10;
+      const W = 720, H = 210;
+      const laneTrain = 60, laneVal = 130;
+      const NS = 'http://www.w3.org/2000/svg';
+
+      let protocol: 'random' | 'purged' = 'random';
+
+      function dayToX(day: number) {
+        return 30 + (day / DAYS) * (W - 60);
+      }
+
+      function render() {
+        const win = parseInt(slider.value, 10);
+        windowValue.textContent = `${win}d`;
+
+        /* window start days */
+        const starts: number[] = [];
+        for (let s = 0; s + win <= DAYS; s += HOP) starts.push(s);
+
+        /* deterministic assignment: seeded pattern, not random per render */
+        const train: number[] = [];
+        const val: number[] = [];
+        starts.forEach((s, i) => {
+          /* fixed interleave keeps the figure stable across renders */
+          if (i % 5 === 0) val.push(s);
+          else train.push(s);
+        });
+
+        let keptVal = val;
+        let purged = 0;
+        if (protocol === 'purged') {
+          keptVal = val.filter((v) => {
+            const vEnd = v + win;
+            const overlaps = train.some((t) => v < t + win + EMBARGO && vEnd > t - EMBARGO);
+            if (overlaps) purged++;
+            return !overlaps;
+          });
+        }
+
+        /* overlap ratio: fraction of kept validation windows intersecting any train window */
+        const overlapping = keptVal.filter((v) =>
+          train.some((t) => v < t + win && v + win > t),
+        ).length;
+        const ratio = keptVal.length ? overlapping / keptVal.length : 0;
+
+        /* draw */
+        svg.innerHTML = '';
+
+        const axis = document.createElementNS(NS, 'line');
+        axis.setAttribute('x1', '30'); axis.setAttribute('x2', String(W - 30));
+        axis.setAttribute('y1', '178'); axis.setAttribute('y2', '178');
+        axis.setAttribute('stroke', 'var(--hair-2)');
+        svg.appendChild(axis);
+        [0, 100, 200, 300, 400, 500].forEach((d) => {
+          const label = document.createElementNS(NS, 'text');
+          label.setAttribute('x', String(dayToX(d)));
+          label.setAttribute('y', '196');
+          label.setAttribute('fill', 'var(--ink-3)');
+          label.setAttribute('font-size', '9');
+          label.setAttribute('font-family', 'var(--mono)');
+          label.setAttribute('text-anchor', 'middle');
+          label.textContent = `d${d}`;
+          svg.appendChild(label);
+        });
+
+        const laneLabel = (text: string, y: number) => {
+          const t = document.createElementNS(NS, 'text');
+          t.setAttribute('x', '30');
+          t.setAttribute('y', String(y - 12));
+          t.setAttribute('fill', 'var(--ink-3)');
+          t.setAttribute('font-size', '9');
+          t.setAttribute('letter-spacing', '1.6');
+          t.setAttribute('font-family', 'var(--mono)');
+          t.textContent = text.toUpperCase();
+          svg.appendChild(t);
+        };
+        laneLabel('train', laneTrain);
+        laneLabel('validation', laneVal);
+
+        const drawWindows = (list: number[], y: number, color: string, h: number) => {
+          for (const s of list) {
+            const r = document.createElementNS(NS, 'rect');
+            r.setAttribute('x', String(dayToX(s)));
+            r.setAttribute('y', String(y));
+            r.setAttribute('width', String(Math.max(1.5, dayToX(s + win) - dayToX(s))));
+            r.setAttribute('height', String(h));
+            r.setAttribute('fill', color);
+            svg.appendChild(r);
+          }
+        };
+
+        drawWindows(train, laneTrain, 'rgba(236,233,226,0.16)', 10);
+
+        /* validation windows: amber where they overlap a train window */
+        for (const v of keptVal) {
+          const leaks = train.some((t) => v < t + win && v + win > t);
+          const r = document.createElementNS(NS, 'rect');
+          r.setAttribute('x', String(dayToX(v)));
+          r.setAttribute('y', String(laneVal));
+          r.setAttribute('width', String(Math.max(1.5, dayToX(v + win) - dayToX(v))));
+          r.setAttribute('height', '10');
+          r.setAttribute('fill', leaks ? 'var(--amber)' : 'var(--spectral)');
+          r.setAttribute('opacity', leaks ? '0.9' : '0.75');
+          svg.appendChild(r);
+        }
+
+        readout.innerHTML =
+          `${train.length} train · ${keptVal.length} validation` +
+          (protocol === 'purged' ? ` · ${purged} purged` : '') +
+          ` · overlap <strong>${ratio.toFixed(2)}</strong>`;
+      }
+
+      buttons.forEach((btn) =>
+        btn.addEventListener('click', () => {
+          protocol = btn.dataset.protocol as 'random' | 'purged';
+          buttons.forEach((b) => {
+            b.classList.toggle('active', b === btn);
+            b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+          });
+          render();
+        }),
+      );
+      slider.addEventListener('input', render);
+      render();
+    });
+  }
+  bootLeakage();
+  document.addEventListener('astro:page-load', bootLeakage);
+</script>

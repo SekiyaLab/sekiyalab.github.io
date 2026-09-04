@@ -1,0 +1,26 @@
+---
+interface Props {
+  no: string;
+  title: string;
+  caption?: string;
+  state?: string;
+}
+
+const { no, title, caption, state } = Astro.props;
+---
+
+<figure class="plate" data-plate>
+  <div class="plate-head">
+    <span class="plate-no">PLATE {no}</span>
+    <span>{title}</span>
+    <div class="plate-toggle" role="group" aria-label="Plate view">
+      <button type="button" data-plate-view aria-pressed="true">Figure</button>
+      {state && <button type="button" data-plate-state aria-pressed="false">State</button>}
+    </div>
+  </div>
+  <div class="plate-body">
+    <slot />
+  </div>
+  {state && <div class="plate-state" data-plate-state-panel>{state}</div>}
+  {caption && <figcaption class="plate-caption" set:html={caption} />}
+</figure>

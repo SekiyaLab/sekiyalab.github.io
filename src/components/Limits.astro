@@ -1,0 +1,13 @@
+---
+interface Props {
+  limits: string[];
+}
+const { limits } = Astro.props;
+---
+
+<aside class="limits" aria-label="What this does not establish">
+  <div class="limits-label">Does not establish</div>
+  <ul>
+    {limits.map((limit) => <li>{limit}</li>)}
+  </ul>
+</aside>

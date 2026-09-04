@@ -1,0 +1,85 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+const objects = await getCollection('objects', ({ data }) => !data.draft);
+---
+
+<Base title="Institute — Sekiya" description="What Sekiya is: an independent institute for computer science, mathematics and computational experimentation." objectCount={objects.length}>
+  <header class="page-head shell">
+    <p class="kicker">Institute</p>
+    <h1>A reading room, switched on.</h1>
+    <p class="page-sub">
+      Sekiya is an independent institute for computer science, mathematics and computational
+      experimentation. It exists for curiosity: elegant experiments, strange behaviour, complexity made
+      visible, systems built simply to be understood. Serious mathematics and engineering —
+      <em>without academic stiffness</em>.
+    </p>
+  </header>
+
+  <section class="section shell">
+    <div class="institute-grid">
+      <div class="reveal">
+        <h3>Spirit</h3>
+        <p>
+          discover → experiment → understand → build → show
+        </p>
+        <p>
+          A description of character, not a workflow. Nothing here passes through gates; a question is
+          enough to begin.
+        </p>
+      </div>
+
+      <div class="reveal">
+        <h3>Areas</h3>
+        <ul>
+          <li>Models &amp; Statistics — model systems, estimators, learning and inference under change</li>
+          <li>Systems &amp; Security — what a record can and cannot establish about what happened</li>
+          <li>Agentic Systems — whether an agent's account of its work can be trusted</li>
+          <li>Computation — deterministic, reproducible, inspectable computing</li>
+        </ul>
+      </div>
+
+      <div class="reveal">
+        <h3>Lineage</h3>
+        <p>
+          Sekiya absorbs the active research of two preserved institutions. From
+          <a href="https://ghalvera.github.io" target="_blank" rel="noreferrer">Ghalvera</a> — the
+          security-evidence programme: the R-00x findings, the range harness, the evidence ledger, and
+          <a href="https://www.npmjs.com/package/trace-npm" target="_blank" rel="noreferrer">trace-npm</a>,
+          which keeps its name and its npm identity. From Lathilda — the computational core: Forge and
+          EMERGENCE. The A-series model studies arrive from an earlier portfolio identity.
+        </p>
+        <p>
+          The predecessors are archived, not erased. Their sites stay exactly as they were.
+        </p>
+      </div>
+
+      <div class="reveal">
+        <h3>Standards</h3>
+        <p>
+          Whatever a Sekiya study claims, the claim is earned: reproducible runs, stated limits, and
+          results that say where they stop. Rigor is the infrastructure here — it is not the identity.
+        </p>
+      </div>
+
+      <div class="reveal">
+        <h3>Elsewhere in the estate</h3>
+        <p>
+          <a href="https://joshuadefreitas.github.io" target="_blank" rel="noreferrer">Joshua de Freitas</a>
+          — the founder's personal site. Mundias — a separate, world-facing record of forecasts and
+          judgment. Neither is Sekiya; Sekiya is the research.
+        </p>
+      </div>
+
+      <div class="reveal">
+        <h3>This site</h3>
+        <p>
+          The field on the front page is computed live — a seeded Gray–Scott system you can scrub in
+          time. Figures here are instruments: each carries its state one toggle away. The site is static,
+          dark by design, and sets no cookies.
+        </p>
+      </div>
+    </div>
+  </section>
+</Base>
