@@ -1,4 +1,28 @@
 <div class="signal-field" data-signal-field aria-hidden="true">
+  <svg class="signal-field__static" viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid slice" focusable="false">
+    <defs>
+      <radialGradient id="signal-static-glow" cx="68%" cy="42%" r="62%">
+        <stop offset="0%" stop-color="rgba(125, 192, 238, .11)" />
+        <stop offset="42%" stop-color="rgba(125, 192, 238, .035)" />
+        <stop offset="100%" stop-color="rgba(125, 192, 238, 0)" />
+      </radialGradient>
+    </defs>
+    <rect width="1200" height="760" fill="url(#signal-static-glow)" />
+    <g class="signal-field__static-lines">
+      <path d="M146 148L310 220L478 165L680 238L900 182L1072 250" />
+      <path d="M102 394L270 336L426 428L612 352L790 436L1058 358" />
+      <path d="M188 594L360 506L550 578L728 492L938 566L1116 500" />
+      <path d="M310 220L270 336L360 506M478 165L426 428L550 578M680 238L612 352L728 492M900 182L790 436L938 566" />
+    </g>
+    <g class="signal-field__static-points">
+      <circle cx="146" cy="148" r="2" /><circle cx="310" cy="220" r="1.4" /><circle cx="478" cy="165" r="1.4" />
+      <circle cx="680" cy="238" r="2.2" /><circle cx="900" cy="182" r="1.4" /><circle cx="1072" cy="250" r="1.4" />
+      <circle cx="102" cy="394" r="1.4" /><circle cx="270" cy="336" r="1.4" /><circle cx="426" cy="428" r="2" />
+      <circle cx="612" cy="352" r="1.4" /><circle cx="790" cy="436" r="1.4" /><circle cx="1058" cy="358" r="2" />
+      <circle cx="188" cy="594" r="1.4" /><circle cx="360" cy="506" r="2" /><circle cx="550" cy="578" r="1.4" />
+      <circle cx="728" cy="492" r="1.4" /><circle cx="938" cy="566" r="2" /><circle cx="1116" cy="500" r="1.4" />
+    </g>
+  </svg>
   <canvas></canvas>
   <div class="signal-field__bloom"></div>
   <div class="signal-field__axis signal-field__axis--x"></div>
@@ -58,9 +82,11 @@
     const draw = (now = 0) => {
       const time = now / 2400;
       context.clearRect(0, 0, width, height);
-      context.fillStyle = '#020307';
+      context.fillStyle = '#0a0b0d';
       context.fillRect(0, 0, width, height);
 
+      /* one quiet light, barely tinted icy — the only place colour is
+         literal in this field, and only ever this faint */
       const glow = context.createRadialGradient(
         (pointer.active ? pointer.x : .69) * width,
         (pointer.active ? pointer.y : .43) * height,
@@ -69,51 +95,37 @@
         (pointer.active ? pointer.y : .43) * height,
         Math.max(width, height) * .68,
       );
-      glow.addColorStop(0, 'rgba(30, 238, 255, .105)');
-      glow.addColorStop(.34, 'rgba(79, 52, 255, .055)');
+      glow.addColorStop(0, `rgba(125, 192, 238, ${pointer.active ? .05 : .028})`);
       glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
       context.fillStyle = glow;
       context.fillRect(0, 0, width, height);
 
+      /* a quiet silver mesh — proximity only, no bright colour */
       const mapped = points.map((point) => coordinates(point, time));
       for (let left = 0; left < mapped.length; left += 1) {
         for (let right = left + 1; right < mapped.length; right += 1) {
           const a = mapped[left];
           const b = mapped[right];
           const distance = Math.hypot(a.x - b.x, a.y - b.y);
-          const threshold = Math.min(width, height) * (points[left].layer === points[right].layer ? .17 : .11);
+          const threshold = Math.min(width, height) * (points[left].layer === points[right].layer ? .16 : .1);
           if (distance > threshold) continue;
           context.beginPath();
           context.moveTo(a.x, a.y);
           context.lineTo(b.x, b.y);
-          const alpha = Math.max(.018, .13 - distance / 1400);
-          const cyan = (left + right) % 7 !== 0;
-          context.strokeStyle = cyan ? `rgba(96, 230, 255, ${alpha})` : `rgba(174, 96, 255, ${alpha * .75})`;
-          context.lineWidth = points[left].layer === 0 ? .55 : 1;
+          const alpha = Math.max(.008, .06 - distance / 2600);
+          context.strokeStyle = `rgba(167, 172, 180, ${alpha})`;
+          context.lineWidth = points[left].layer === 0 ? .5 : .8;
           context.stroke();
         }
       }
 
       mapped.forEach((point, index) => {
-        const accent = index % 13 === 0;
+        const accent = index % 34 === 0;
         context.beginPath();
-        context.arc(point.x, point.y, accent ? 2.8 : points[index].layer === 2 ? 1.35 : .75, 0, Math.PI * 2);
-        context.fillStyle = accent ? (index % 26 === 0 ? '#ff3ea5' : '#a6ff4d') : '#9defff';
+        context.arc(point.x, point.y, accent ? 1.7 : points[index].layer === 2 ? 1.05 : .6, 0, Math.PI * 2);
+        context.fillStyle = accent ? 'rgba(125, 192, 238, .7)' : 'rgba(167, 172, 180, .5)';
         context.fill();
       });
-
-      context.globalCompositeOperation = 'screen';
-      context.lineWidth = 1;
-      for (let band = 0; band < 4; band += 1) {
-        context.beginPath();
-        for (let x = -20; x <= width + 20; x += 12) {
-          const y = height * (.2 + band * .18) + Math.sin(x * .006 + time * (.34 + band * .06) + band) * (22 + band * 8);
-          x === -20 ? context.moveTo(x, y) : context.lineTo(x, y);
-        }
-        context.strokeStyle = band === 2 ? 'rgba(163, 69, 255, .13)' : 'rgba(57, 227, 255, .09)';
-        context.stroke();
-      }
-      context.globalCompositeOperation = 'source-over';
 
       if (!reduced.matches) frame = requestAnimationFrame(draw);
     };

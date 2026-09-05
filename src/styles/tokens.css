@@ -1,49 +1,75 @@
-/* Sekiya — design tokens. Bright enough to read; strange enough to remember. */
+/* Sekiya — design tokens. The Black Institute.
+
+   Same visual system as joshuadefreitas.github.io — one neutral scale, the
+   same font stack, the same restraint. Sekiya adds exactly one thing the
+   personal site doesn't allow itself: a disciplined icy-blue accent (drawn
+   from BlackArch's Astral/Cornflower blues), used the way that site uses
+   its silver "sheen" — on one control, on focus, on the rare technical
+   highlight. Everything else is neutral. Less is more; the mechanism does
+   the talking. */
 
 :root {
-  /* ground */
-  --void: #f5f3ed;
-  --raised: #fffdf8;
-  --plate: #e9e7de;
-  --plate-2: #dcddd4;
-
-  /* ink — ordinary reading text earns ordinary reading contrast. */
-  --ink: #16201d;
-  --ink-2: #43504a;
-  --ink-3: #65716a;
-  --ink-4: #53615a;
-
-  /* hairlines */
-  --hair: rgba(22, 32, 29, 0.12);
-  --hair-2: rgba(22, 32, 29, 0.22);
-  --hair-3: rgba(22, 32, 29, 0.38);
-
-  /* accents — used at ~2% dosage */
-  --amber: #a84328;
-  --amber-dim: rgba(168, 67, 40, 0.62);
-  --amber-hair: rgba(168, 67, 40, 0.3);
-  --spectral: #166d7d;
-  --spectral-dim: rgba(22, 109, 125, 0.58);
-
-  /* type */
-  --serif-display: 'Newsreader Display', ui-serif, Georgia, 'Times New Roman', serif;
+  /* type — identical stack to the personal site */
   --serif: 'Newsreader Text', ui-serif, Georgia, 'Times New Roman', serif;
+  --serif-display: 'Newsreader Display', ui-serif, Georgia, 'Times New Roman', serif;
   --serif-italic: 'Newsreader Italic', 'Newsreader Text', ui-serif, Georgia, serif;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
   --mono: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  /* layout */
-  --shell: 1320px;
+  /* measure — narrower and calmer than the previous pass */
+  --shell: 1180px;
   --measure: 66ch;
-  --gutter: max(24px, calc((100vw - var(--shell)) / 2));
-  --rail: 200px;
-  --section-y: clamp(80px, 10vw, 150px);
+  --gutter: clamp(24px, 5vw, 56px);
+  --rail: 184px;
+  --section-y: clamp(80px, 9vw, 140px);
+  --anchor-offset: 96px;
 
   /* motion */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --ease-ui: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --t-fast: 160ms;
-  --t-med: 320ms;
-  --t-slow: 560ms;
+  --t-med: 260ms;
+  --t-slow: 520ms;
 
-  color-scheme: light;
+  /* ground — the Institute is dark-only; there is no light remap */
+  color-scheme: dark;
+
+  --void: #0a0b0d;
+  --raised: #101114;
+  --plate: #0d0e11;
+  --surface: #121316;
+  --surface-2: #17191d;
+
+  --ink: #edeef1;
+  --ink-2: #a7acb4;
+  --ink-3: #83888f;
+  --ink-4: #797d86;
+
+  --hair: rgba(237, 238, 241, 0.075);
+  --hair-2: rgba(237, 238, 241, 0.13);
+  --hair-3: rgba(237, 238, 241, 0.24);
+  --line: #2a2d33;
+  --line-2: #40444c;
+  --line-3: #636973;
+
+  --silver-edge: #737b86;
+  --silver-glint: rgba(255, 255, 255, 0.09);
+  --sheen: linear-gradient(100deg, #565b63 0%, #aab0b9 20%, #6a7079 46%, #c1c7cf 70%, #616770 100%);
+  --sheen-hair: linear-gradient(90deg, transparent 0%, #3b4048 10%, #858d98 34%, #c8cdd4 50%, #777f8a 66%, #3e434b 90%, transparent 100%);
+  --sheen-soft: rgba(237, 238, 241, 0.05);
+
+  /* the one accent — icy blue, disciplined. BlackArch Cornflower/Astral. */
+  --ice: #7dc0ee;
+  --ice-dim: rgba(125, 192, 238, 0.62);
+  --ice-hair: rgba(125, 192, 238, 0.26);
+  --on-ice: #071016;
+
+  /* legacy alias names still referenced across the codebase — map onto the
+     tokens above so nothing needs a second pass to compile correctly */
+  --amber: var(--ice);
+  --amber-dim: var(--ice-dim);
+  --amber-hair: var(--ice-hair);
+  --spectral: var(--ink-2);
+  --spectral-dim: rgba(167, 172, 180, 0.5);
 }

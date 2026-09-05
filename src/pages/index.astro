@@ -7,6 +7,9 @@ import { areas, research } from '../data/research';
 
 const questions = (await getCollection('questions')).sort((a, b) => a.data.order - b.data.order);
 const countFor = (code: (typeof areas)[number]['code']) => research.filter((item) => item.area === code).length;
+const publicCount = research.filter((item) => item.access === 'Public').length;
+const privateCount = research.filter((item) => item.access === 'Private').length;
+const openShelfCount = research.filter((item) => item.access === 'Open shelf').length;
 ---
 
 <Base
@@ -18,11 +21,11 @@ const countFor = (code: (typeof areas)[number]['code']) => research.filter((item
     <SignalField />
     <div class="shell home-hero__grid">
       <div class="home-hero__copy">
-        <p class="eyebrow">Sekiya / live system 01</p>
+        <p class="eyebrow">Sekiya / {research.length} named public-index entries</p>
         <h1>Look closer.<br />Things are already <em>moving.</em></h1>
         <p class="home-hero__lede">
-          An independent place for models, machines, simulations, and the occasional thing
-          that refuses to stay classified.
+          An independent place for models, machines, simulations, and public evidence:{' '}
+          {publicCount} linked objects, {openShelfCount} open shelf, and private work named only at its boundary.
         </p>
         <p class="home-hero__aside">Mostly, it is a way of finding things out.</p>
         <div class="home-hero__actions">
@@ -30,10 +33,10 @@ const countFor = (code: (typeof areas)[number]['code']) => research.filter((item
           <a class="button button--quiet" href="/institute/">Why this exists <span aria-hidden="true">→</span></a>
         </div>
       </div>
-      <div class="home-hero__telemetry" aria-hidden="true">
-        <span>field / active</span>
-        <span>cursor / perturb</span>
-        <span>scroll / refract</span>
+      <div class="home-hero__telemetry">
+        <span>{publicCount} public links</span>
+        <span>{privateCount} private boundaries</span>
+        <span>{areas.length} areas</span>
       </div>
     </div>
   </section>
