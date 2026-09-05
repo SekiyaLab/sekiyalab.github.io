@@ -29,12 +29,18 @@
 
 ## Sekiya synthesis
 
-**Art direction: Signal Cartography.** Near-black space contains executable-looking
-maps: topology, traces, boundaries, and state fields. Cyan is the carrier signal;
-violet marks uncertainty and model structure; green marks compute; magenta is a
-rare anomaly. The hero is one viewport-sized topology instrument. Research objects
-carry their own miniature mechanism rather than a shared thumbnail treatment.
-Academy is a navigable knowledge field whose rooms turn recovered technical notes
-into visual traces and experiments. Canvas remains progressive enhancement; text,
-SVG, focus states, static compositions, and reduced-motion behavior retain the
-meaning without it.
+**Decision: Black Institute instrument/workbench.** I kept the research note's
+best constraints: one full-viewport computational composition, mechanism-specific
+figures instead of thumbnails, no scroll-gated meaning, and canvas as progressive
+enhancement. I rejected the earlier palette proposal. Cyan, violet, green, and
+magenta together would make the site read as cyberpunk telemetry, which is
+explicitly the wrong direction for this candidate.
+
+The revised system is dark-only and neutral-first: near-black ground, Newsreader
+and Inter typography aligned with the public personal site, sharp hairline plates,
+numbered rails, and a single restrained icy-blue accent. The accent is used for
+current state, focus, one filled action, and rare technical highlights. Everything
+else is silver, black, and readable grey. The hero's live field is decorative
+grounded motion; the public research index remains the source of public/private
+truth, and a static SVG fallback preserves the visual composition when JavaScript
+or animation is unavailable.

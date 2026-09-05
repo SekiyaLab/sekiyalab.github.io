@@ -1,5 +1,7 @@
 ---
 import { ClientRouter } from 'astro:transitions';
+import Mark from '../components/Mark.astro';
+import SiteField from '../components/SiteField.astro';
 import '../styles/tokens.css';
 import '../styles/base.css';
 import '../styles/night.css';
@@ -28,7 +30,7 @@ const year = new Date().getUTCFullYear();
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#030408" />
+    <meta name="theme-color" content="#0a0b0d" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
@@ -48,11 +50,14 @@ const year = new Date().getUTCFullYear();
   </head>
   <body data-objects={objectCount}>
     <a class="skip-link" href="#main">Skip to content</a>
+    <SiteField />
 
     <header class="site-header shell">
       <div class="status-line">
-        <a class="wordmark" href="/">Sekiya</a>
-        <span class="status-place mono mono-dim" aria-hidden="true">Systems, models, computation</span>
+        <a class="wordmark" href="/" aria-label="Sekiya home">
+          <Mark size={34} />
+          <span class="wordmark__text">Sekiya</span>
+        </a>
         <nav class="site-nav" aria-label="Primary">
           {
             [
@@ -86,11 +91,10 @@ const year = new Date().getUTCFullYear();
     </main>
 
     <footer class="site-footer">
-      <p class="footer-creed">Built to be looked at closely.</p>
+      <p class="footer-creed">Built for evidence, limits, and close reading.</p>
       <div class="footer-grid">
         <a href="https://github.com/SekiyaLab" target="_blank" rel="noreferrer">GitHub ↗</a>
         <a href="https://www.npmjs.com/package/trace-npm" target="_blank" rel="noreferrer">trace-npm on npm ↗</a>
-        <a href="https://joshuadefreitas.github.io" target="_blank" rel="noreferrer">Joshua de Freitas ↗</a>
         <span class="spacer"></span>
         <span>© {year} Sekiya</span>
       </div>

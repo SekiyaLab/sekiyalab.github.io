@@ -7,18 +7,10 @@ const counts = Object.fromEntries(
 );
 ---
 
-<div class="research-index" data-research-index>
-  <div class="research-index__head">
-    <div>
-      <p class="eyebrow">The work</p>
-      <h2>Named here. Linked when the signal is public.</h2>
-    </div>
-    <p>
-      Some work is still private. It belongs in the map anyway.
-      <span class="research-index__count" data-research-count aria-live="polite">{research.length} entries</span>
-    </p>
-  </div>
-
+<div class="section-rail">
+  <p class="eyebrow">The work</p>
+  <h2>Named here. Linked when the signal is public.</h2>
+  <p class="section-intro">Some work is still private. It belongs in the index anyway.</p>
   <div class="research-index__filters" role="group" aria-label="Filter work by area">
     <button class="research-filter" type="button" data-research-filter="all" aria-pressed="true">All <span>{research.length}</span></button>
     {areas.map((area) => (
@@ -27,28 +19,39 @@ const counts = Object.fromEntries(
       </button>
     ))}
   </div>
+  <span class="research-index__count" data-research-count aria-live="polite">{research.length} entries</span>
+</div>
 
-  <ol class="work-grid">
+<div class="section-content" data-research-index>
+  <ol class="work-ledger">
     {research.map((item, index) => (
-      <li class:list={['work-card', `work-card--${item.area}`, `work-card--${item.signature}`]} data-work-area={item.area}>
-        <div class="work-card__visual">
+      <li class:list={['work-row', `work-row--${item.area}`, `work-row--${item.signature}`]} data-work-area={item.area}>
+        <span class="work-row__number">{String(index + 1).padStart(2, '0')}</span>
+        <div class="work-row__visual">
           <ProjectGlyph signature={item.signature} title={item.title} />
         </div>
-        <span class="work-card__number">{String(index + 1).padStart(2, '0')}</span>
-        <div class="work-card__meta">
-          <span>{item.kind}</span>
-          <span class:list={[
-            'access-tag',
-            item.access === 'Public' ? 'is-public' : item.access === 'Private' ? 'is-private' : 'is-open',
-          ]}>
-            {item.access}
-          </span>
+        <div class="work-row__body">
+          <div class="work-row__meta">
+            <span>{item.kind}</span>
+            <span class:list={[
+              'access-tag',
+              item.access === 'Public' ? 'is-public' : item.access === 'Private' ? 'is-private' : 'is-open',
+            ]}>
+              {item.access}
+            </span>
+            {item.flagged && <span class="flag-tag" title="A genuine flagged finding">Flagged</span>}
+          </div>
+          <h3>
+            {item.href ? (
+              item.href.startsWith('/') ? (
+                <a href={item.href}>{item.title}<span aria-hidden="true"> →</span></a>
+              ) : (
+                <a href={item.href} target="_blank" rel="noreferrer">{item.title}<span aria-hidden="true"> ↗</span></a>
+              )
+            ) : item.title}
+          </h3>
+          <p>{item.summary}</p>
         </div>
-        <h3>
-          {item.href ? <a href={item.href} target="_blank" rel="noreferrer">{item.title}<span aria-hidden="true"> ↗</span></a> : item.title}
-        </h3>
-        <p>{item.summary}</p>
-        <span class="work-card__trace" aria-hidden="true"></span>
       </li>
     ))}
   </ol>
@@ -60,9 +63,9 @@ const counts = Object.fromEntries(
     if (!root) return;
     root.dataset.ready = 'true';
 
-    const buttons = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-research-filter]'));
+    const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-research-filter]'));
     const cards = Array.from(root.querySelectorAll<HTMLElement>('[data-work-area]'));
-    const count = root.querySelector<HTMLElement>('[data-research-count]');
+    const count = document.querySelector<HTMLElement>('[data-research-count]');
 
     const apply = (area: string) => {
       let visible = 0;

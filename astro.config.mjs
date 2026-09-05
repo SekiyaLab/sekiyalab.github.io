@@ -12,7 +12,11 @@ export default defineConfig({
     remarkPlugins: [remarkMath],
     rehypePlugins: [rehypeKatex],
     shikiConfig: {
-      theme: 'github-dark-default',
+      /* 'css-variables' emits var(--astro-code-token-*) instead of literal
+       * theme colours, so code blocks stay inside the site's own neutral
+       * scale — see :root in tokens.css — instead of importing a separate
+       * multi-colour syntax palette. */
+      theme: 'css-variables',
     },
   },
   build: {

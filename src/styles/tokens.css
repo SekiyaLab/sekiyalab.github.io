@@ -1,49 +1,101 @@
-/* Sekiya — design tokens. Bright enough to read; strange enough to remember. */
+/* Sekiya — design tokens.
+   Foundation: near-black void, graphite surfaces, cold white ink. Two
+   functional colours sit on top of that neutral base: blue-grey for built
+   structure and icy-blue for active information. */
 
 :root {
-  /* ground */
-  --void: #f5f3ed;
-  --raised: #fffdf8;
-  --plate: #e9e7de;
-  --plate-2: #dcddd4;
-
-  /* ink — ordinary reading text earns ordinary reading contrast. */
-  --ink: #16201d;
-  --ink-2: #43504a;
-  --ink-3: #65716a;
-  --ink-4: #53615a;
-
-  /* hairlines */
-  --hair: rgba(22, 32, 29, 0.12);
-  --hair-2: rgba(22, 32, 29, 0.22);
-  --hair-3: rgba(22, 32, 29, 0.38);
-
-  /* accents — used at ~2% dosage */
-  --amber: #a84328;
-  --amber-dim: rgba(168, 67, 40, 0.62);
-  --amber-hair: rgba(168, 67, 40, 0.3);
-  --spectral: #166d7d;
-  --spectral-dim: rgba(22, 109, 125, 0.58);
-
-  /* type */
-  --serif-display: 'Newsreader Display', ui-serif, Georgia, 'Times New Roman', serif;
+  /* ---------- type families ---------- */
   --serif: 'Newsreader Text', ui-serif, Georgia, 'Times New Roman', serif;
+  --serif-display: 'Newsreader Display', ui-serif, Georgia, 'Times New Roman', serif;
   --serif-italic: 'Newsreader Italic', 'Newsreader Text', ui-serif, Georgia, serif;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
   --mono: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  /* layout */
-  --shell: 1320px;
-  --measure: 66ch;
-  --gutter: max(24px, calc((100vw - var(--shell)) / 2));
-  --rail: 200px;
-  --section-y: clamp(80px, 10vw, 150px);
+  /* ---------- type scale — max ~4:1 ratio, floors on small sizes so
+     nothing degrades into faint filler text ---------- */
+  --fs-display: clamp(2.5rem, 4.2vw, 4rem);
+  --fs-h2: clamp(1.75rem, 2.6vw, 2.375rem);
+  --fs-h3: clamp(1.15rem, 1.4vw, 1.3rem);
+  --fs-lede: clamp(1.0625rem, 1.15vw, 1.25rem);
+  --fs-body: 1rem;
+  --fs-label: 0.8125rem;
+  --fs-micro: 0.75rem;
 
-  /* motion */
+  /* ---------- measure ---------- */
+  --shell: 1180px;
+  --measure: 66ch;
+  --gutter: clamp(24px, 5vw, 56px);
+  --rail: 176px;
+  --section-y: clamp(80px, 9vw, 140px);
+  --anchor-offset: 96px;
+
+  /* ---------- motion ---------- */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --ease-ui: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --t-fast: 160ms;
-  --t-med: 320ms;
-  --t-slow: 560ms;
+  --t-med: 260ms;
+  --t-slow: 520ms;
 
-  color-scheme: light;
+  /* ---------- ground — dark only, no light remap ---------- */
+  color-scheme: dark;
+
+  --void: #0a0c10;
+  --raised: #10131a;
+  --plate: #0d1017;
+  --surface: #141821;
+  --surface-2: #191d27;
+
+  --ink: #eef1f5;
+  --ink-2: #aab2bf;
+  --ink-3: #838d9c;
+  --ink-4: #7a8494;
+
+  --hair: rgba(238, 241, 245, 0.075);
+  --hair-2: rgba(238, 241, 245, 0.13);
+  --hair-3: rgba(238, 241, 245, 0.24);
+  --line: #262b35;
+  --line-2: #3b4250;
+  --line-3: #5b6474;
+
+  --silver-glint: rgba(255, 255, 255, 0.08);
+  --sheen-hair: linear-gradient(90deg, transparent 0%, #3b4048 10%, #858d98 34%, #c8cdd4 50%, #777f8a 66%, #3e434b 90%, transparent 100%);
+
+  /* structural blue-grey — a surface, never text. */
+  --structure: #16243a;
+  --structure-raised: #1c2f4a;
+  --structure-line: rgba(140, 175, 220, 0.22);
+
+  /* the one active-information accent. Hover, focus, the selected state,
+     a traced connection. Never a background wash. */
+  --accent: #5fb8f0;
+  --accent-dim: rgba(95, 184, 240, 0.6);
+  --accent-hair: rgba(95, 184, 240, 0.28);
+  --on-accent: #061019;
+
+  /* the same cold accent, used sparingly for genuine flagged findings. */
+  --flag: var(--accent);
+  --flag-dim: var(--accent-hair);
+
+  /* a second, neutral value for the other side of a direct comparison
+     (e.g. the two lanes of a state diff) — grey, not a second hue */
+  --muted: var(--ink-2);
+  --muted-dim: rgba(167, 172, 180, 0.5);
+
+  /* legacy alias kept for any not-yet-migrated reference */
+  --flag-hair: var(--flag-dim);
+
+  /* Shiki 'css-variables' theme: code blocks read as calm neutral text,
+     the same reading voice as everything else, not a second palette */
+  --astro-code-foreground: var(--ink-2);
+  --astro-code-background: var(--plate);
+  --astro-code-token-constant: var(--ink);
+  --astro-code-token-string: var(--ink-2);
+  --astro-code-token-comment: var(--ink-4);
+  --astro-code-token-keyword: var(--ink);
+  --astro-code-token-parameter: var(--ink-2);
+  --astro-code-token-function: var(--ink);
+  --astro-code-token-string-expression: var(--ink-2);
+  --astro-code-token-punctuation: var(--ink-3);
+  --astro-code-token-link: var(--accent);
 }

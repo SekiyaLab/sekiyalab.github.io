@@ -69,12 +69,12 @@
   .trace-list li.seen { opacity: 1; }
   .trace-list li .t { flex: 0 0 6ch; color: var(--ink-4); font-variant-numeric: tabular-nums; }
   .trace-list li .kind { flex: 0 0 7ch; text-transform: uppercase; font-size: 9px; letter-spacing: 0.14em; padding-top: 2px; }
-  .trace-list li.k-read .kind { color: var(--spectral); }
+  .trace-list li.k-read .kind { color: var(--muted); }
   .trace-list li.k-spawn .kind { color: var(--ink-2); }
-  .trace-list li.k-net .kind { color: var(--amber); }
+  .trace-list li.k-net .kind { color: var(--accent); }
   .trace-list li .detail { overflow-wrap: anywhere; }
   .trace-list li.flag { color: var(--ink); }
-  .trace-list li.flag .detail { color: var(--amber); }
+  .trace-list li.flag .detail { color: var(--accent); }
   .trace-counts {
     margin-top: 14px;
     font-size: 10px;
@@ -83,7 +83,7 @@
     color: var(--ink-3);
     font-variant-numeric: tabular-nums;
   }
-  .trace-counts strong { color: var(--amber); font-weight: 400; }
+  .trace-counts strong { color: var(--accent); font-weight: 400; }
 </style>
 
 <script>
@@ -139,6 +139,12 @@
         return li;
       });
 
+      /* the plate opens pre-scrubbed to the interesting moment (t=78ms); that
+       * initial render must not drag the whole page down to follow it —
+       * only a render caused by the visitor's own input should autoscroll
+       * the (internally scrollable) event list. */
+      let userDriven = false;
+
       function render(t: number) {
         let seen = 0;
         let flagged = 0;
@@ -159,8 +165,10 @@
         handle.style.left = `${pct}%`;
         track.setAttribute('aria-valuenow', String(t));
         track.setAttribute('aria-valuetext', `${t} milliseconds, ${seen} of ${EVENTS.length} events`);
-        const last = items.filter((el) => el.classList.contains('seen')).pop();
-        last?.scrollIntoView({ block: 'nearest' });
+        if (userDriven) {
+          const last = items.filter((el) => el.classList.contains('seen')).pop();
+          last?.scrollIntoView({ block: 'nearest' });
+        }
       }
 
       let dragging = false;
@@ -188,6 +196,7 @@
       });
 
       render(78); /* open at the moment the decoy key is read */
+      userDriven = true;
     });
   }
   bootTraces();
