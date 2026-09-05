@@ -8,6 +8,14 @@ export type ResearchItem = {
   summary: string;
   signature: string;
   href?: string;
+  /** ISO date, only set where a real dated object backs this entry —
+   * left undefined rather than guessed for everything else. */
+  date?: string;
+  /** real cross-references, matched against other entries' `slug` */
+  related?: string[];
+  slug?: string;
+  /** a genuine flagged finding — set on at most one entry at a time */
+  flagged?: boolean;
 };
 
 export const areas: Array<{
@@ -95,6 +103,9 @@ export const research: ResearchItem[] = [
     href: 'https://github.com/SekiyaLab/deep-lob',
     summary: 'How an experiment can manufacture confidence from a market with no signal.',
     signature: 'lob',
+    date: '2026-08-02',
+    slug: 'deep-lob',
+    related: ['trace-npm'],
   },
   {
     title: 'Spectral Recovery',
@@ -120,6 +131,21 @@ export const research: ResearchItem[] = [
     href: 'https://github.com/SekiyaLab/trace-npm',
     summary: 'A close look at what an npm lifecycle script touches, spawns, and contacts.',
     signature: 'trace',
+    date: '2026-08-21',
+    slug: 'trace-npm',
+  },
+  {
+    title: 'Evidence that exists and cannot be retrieved',
+    area: 'systems',
+    kind: 'Finding',
+    access: 'Public',
+    href: '/f/audit-retrieval/',
+    summary: 'A successful empty audit query did not establish an empty record — 192 records sat in the log the whole time.',
+    signature: 'audit',
+    date: '2026-08-17',
+    slug: 'audit-retrieval',
+    related: ['trace-npm'],
+    flagged: true,
   },
   {
     title: 'Systems & Security Core',
@@ -134,7 +160,7 @@ export const research: ResearchItem[] = [
     area: 'systems',
     kind: 'Study',
     access: 'Private',
-    summary: 'When a transformed telemetry record still supports the same security conclusion.',
+    summary: 'When a transformed event record still supports the same security conclusion.',
     signature: 'invariance',
   },
   {

@@ -54,7 +54,7 @@
     width: 9px;
     height: 9px;
     background: var(--void);
-    border: 1px solid var(--amber);
+    border: 1px solid var(--accent);
     transform: rotate(45deg);
     cursor: ew-resize;
   }
@@ -62,7 +62,7 @@
     width: 9px;
     height: 9px;
     background: var(--void);
-    border: 1px solid var(--amber);
+    border: 1px solid var(--accent);
     transform: rotate(45deg);
     cursor: ew-resize;
     border-radius: 0;
@@ -75,7 +75,7 @@
     color: var(--ink-3);
     font-variant-numeric: tabular-nums;
   }
-  .leakage-readout strong { color: var(--amber); font-weight: 400; }
+  .leakage-readout strong { color: var(--accent); font-weight: 400; }
 </style>
 
 <script>
@@ -183,9 +183,9 @@
           }
         };
 
-        drawWindows(train, laneTrain, 'rgba(236,233,226,0.16)', 10);
+        drawWindows(train, laneTrain, 'rgba(237,238,241,0.16)', 10);
 
-        /* validation windows: amber where they overlap a train window */
+        /* validation windows: highlighted where they overlap a train window */
         for (const v of keptVal) {
           const leaks = train.some((t) => v < t + win && v + win > t);
           const r = document.createElementNS(NS, 'rect');
@@ -193,7 +193,7 @@
           r.setAttribute('y', String(laneVal));
           r.setAttribute('width', String(Math.max(1.5, dayToX(v + win) - dayToX(v))));
           r.setAttribute('height', '10');
-          r.setAttribute('fill', leaks ? 'var(--amber)' : 'var(--spectral)');
+          r.setAttribute('fill', leaks ? 'var(--accent)' : 'var(--muted)');
           r.setAttribute('opacity', leaks ? '0.9' : '0.75');
           svg.appendChild(r);
         }

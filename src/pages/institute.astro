@@ -8,11 +8,11 @@ const objects = await getCollection('objects', ({ data }) => !data.draft);
 <Base title="About Sekiya" description="A place for computer science and computational experimentation." objectCount={objects.length}>
   <header class="page-head shell">
     <p class="kicker">About Sekiya</p>
-    <h1>A place to leave a question open for a while.</h1>
+    <h1>A quiet room for difficult systems.</h1>
     <p class="page-sub">
       Sekiya is an independent place for computer science and computational experimentation. It is for
-      elegant experiments, strange behaviour, complexity made visible, and systems built simply to be
-      understood. Serious work, without the stiff collar.
+      elegant experiments, strange behaviour, complexity made visible, and systems built so their
+      evidence and limits can be inspected.
     </p>
   </header>
 
@@ -21,7 +21,7 @@ const objects = await getCollection('objects', ({ data }) => !data.draft);
       <div class="reveal">
         <h3>What starts it</h3>
         <p>
-          Curiosity. A question is enough to begin; the rest has to earn its place.
+          A precise question is enough to begin; everything else has to earn its place.
         </p>
       </div>
 
@@ -49,15 +49,7 @@ const objects = await getCollection('objects', ({ data }) => !data.draft);
           Public work is linked. Private work is named on the index, but stays private until it is ready.
           One useful tool is
           <a href="https://www.npmjs.com/package/trace-npm" target="_blank" rel="noreferrer">trace-npm</a>
-          {' '}— a small instrument for seeing what an npm lifecycle script actually did.
-        </p>
-      </div>
-
-      <div class="reveal">
-        <h3>Elsewhere</h3>
-        <p>
-          <a href="https://joshuadefreitas.github.io" target="_blank" rel="noreferrer">Joshua de Freitas</a>
-          {' '}keeps a personal index of projects, writing, and other experiments.
+          {' '}— a small instrument for seeing what an npm lifecycle script touched, spawned, and contacted.
         </p>
       </div>
     </div>

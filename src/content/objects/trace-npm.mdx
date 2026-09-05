@@ -5,7 +5,6 @@ type: instrument
 area: S&S
 date: 2026-08-21
 status: alpha on npm
-origin: Ghalvera
 question: What does an npm install really touch?
 summary: Runs an npm lifecycle script under a syscall tracer and reports what it read, spawned and contacted.
 repo: https://github.com/SekiyaLab/trace-npm
@@ -49,6 +48,6 @@ import TracePlate from '../../components/figures/TracePlate.astro';
 
 ## Full
 
-**Provenance.** Originally developed under Ghalvera and published on npm under that identity; the package name and publication history are preserved. Active development continues here, in Sekiya's Systems & Security area.
+**Provenance.** The package name and publication history are preserved. Active development continues here, in Sekiya's Systems & Security area.
 
 **Blind spots.** The tracer sees one process tree on one kernel; behaviour gated on environment, time or remote state may not fire during a run. A clean report is an absence of observed behaviour, not evidence of absence.

@@ -54,23 +54,22 @@ for (const viewport of [
   const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 1440, height: 1000 } });
   const page = await context.newPage();
   await page.goto(base + '/', { waitUntil: 'domcontentloaded' });
+  await page.waitForLoadState('load');
   const state = await page.evaluate(() => {
     const hero = document.querySelector('.home-hero');
     const heading = document.querySelector('.home-hero h1');
-    const staticField = document.querySelector('.signal-field__static');
-    const canvas = document.querySelector('.signal-field canvas');
-    const box = staticField?.getBoundingClientRect();
+    const field = document.querySelector('.home-hero__field');
+    const box = field?.getBoundingClientRect();
     return {
       heading: heading?.textContent?.trim() ?? '',
       heroHeight: Math.round(hero?.getBoundingClientRect().height ?? 0),
-      staticField: Boolean(staticField),
-      staticWidth: Math.round(box?.width ?? 0),
-      staticHeight: Math.round(box?.height ?? 0),
-      canvas: Boolean(canvas),
+      field: Boolean(field),
+      fieldWidth: Math.round(box?.width ?? 0),
+      fieldHeight: Math.round(box?.height ?? 0),
     };
   });
-  if (state.heading && state.staticField && state.staticWidth > 1000 && state.staticHeight > 700 && state.canvas) {
-    pass(`no-js fallback — hero text and static field render (${state.staticWidth}x${state.staticHeight}, hero ${state.heroHeight}px)`);
+  if (state.heading && state.field && state.fieldWidth > 1000 && state.fieldHeight > 700 && state.heroHeight <= 1100) {
+    pass(`no-js fallback — hero text and static field render (${state.fieldWidth}x${state.fieldHeight}, hero ${state.heroHeight}px)`);
   } else {
     fail(`no-js fallback — ${JSON.stringify(state)}`);
   }
@@ -172,31 +171,37 @@ for (const p of axePages) {
 {
   const page = await browser.newPage();
   await page.goto(base + '/', { waitUntil: 'networkidle' });
-  const nonPublicLinks = await page.locator('.work-card:has(.access-tag:not(.is-public)) a').count();
+  const nonPublicLinks = await page.locator('[data-work-area]:has(.access-tag:not(.is-public)) a').count();
   const named = await page.locator('[data-work-area]').count();
   if (nonPublicLinks === 0 && named >= 14) pass(`work index — ${named} named entries; non-public entries are not linked`);
   else fail(`work index — non-public links=${nonPublicLinks}, named=${named}`);
   await page.close();
 }
 
-/* ---------- 6. reduced motion: procedural systems settle to static views ---------- */
+/* ---------- 6. reduced motion: the hero field stops animating,
+   and smooth scrolling is disabled ---------- */
 {
   const context = await browser.newContext({ reducedMotion: 'reduce' });
   const page = await context.newPage();
   await page.goto(base + '/', { waitUntil: 'networkidle' });
-  const state = await page.evaluate(() => {
-    const bloom = document.querySelector('.signal-field__bloom');
-    const bloomStyle = bloom ? getComputedStyle(bloom) : null;
-    return {
-      media: matchMedia('(prefers-reduced-motion: reduce)').matches,
-      bloomAnimation: bloomStyle?.animationName ?? 'missing',
-      smoothScroll: getComputedStyle(document.documentElement).scrollBehavior,
-    };
-  });
-  if (state.media && state.bloomAnimation === 'none' && state.smoothScroll === 'auto') {
-    pass('reduced motion — canvas drift, CSS animation, and smooth scrolling are disabled');
+  await page.waitForTimeout(300);
+  const heroMotion = await page.evaluate(() =>
+    Array.from(document.querySelectorAll('.site-field__mesh, .site-field__signal, .home-hero__environment, .home-hero__field, .home-hero__plane')).map((el) => {
+      const style = getComputedStyle(el);
+      return {
+        animationName: style.animationName,
+        animationDuration: style.animationDuration,
+        transform: style.transform,
+      };
+    }),
+  );
+  const smoothScroll = await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior);
+  const media = await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const fieldStatic = heroMotion.every((item) => item.animationName === 'none' && item.transform === 'none');
+  if (media && fieldStatic && smoothScroll === 'auto') {
+    pass('reduced motion — site and hero fields stop animating; smooth scrolling disabled');
   } else {
-    fail(`reduced motion — ${JSON.stringify(state)}`);
+    fail(`reduced motion — media=${media}, fieldStatic=${fieldStatic}, smoothScroll=${smoothScroll}, heroMotion=${JSON.stringify(heroMotion)}`);
   }
   await context.close();
 }
@@ -245,10 +250,10 @@ for (const p of axePages) {
     };
     return [
       ['hero lede', '.home-hero__lede'],
-      ['section summary', '.section-heading > p:last-child'],
-      ['work card body', '.work-card p'],
+      ['section intro', '.section-rail .section-intro'],
+      ['work row body', '.work-row p'],
       ['filter', '.research-filter'],
-      ['button', '.button--bright'],
+      ['hero entry', '.home-hero__entry'],
     ].map(([name, selector]) => {
       const el = document.querySelector(selector);
       if (!el) return { name, selector, found: false };

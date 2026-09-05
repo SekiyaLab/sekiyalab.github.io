@@ -24,10 +24,10 @@ function mulberry32(seed: number) {
 const W = 640, H = 420;
 
 function ridgeline() {
-  /* M&S — a joyplot of overlapping density curves; the front curve is amber */
+  /* M&S — a joyplot of overlapping density curves; the front curve is highlighted */
   const rnd = mulberry32(9001);
   const rows = 6;
-  const paths: { d: string; amber: boolean }[] = [];
+  const paths: { d: string; highlight: boolean }[] = [];
   for (let r = 0; r < rows; r++) {
     const baseY = 60 + r * 56;
     const mu = 0.28 + rnd() * 0.44;
@@ -44,7 +44,7 @@ function ridgeline() {
     let d = `M${pts[0][0].toFixed(1)},${(baseY + 10).toFixed(1)} `;
     d += pts.map(([x, y]) => `L${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
     d += ` L${pts[pts.length - 1][0].toFixed(1)},${(baseY + 10).toFixed(1)} Z`;
-    paths.push({ d, amber: r === rows - 1 });
+    paths.push({ d, highlight: r === rows - 1 });
   }
   return paths;
 }
@@ -96,7 +96,7 @@ const field = area === 'CMP' ? vectorField() : null;
   {ridge && (
     <svg viewBox={`0 0 ${W} ${H}`} role="presentation" aria-hidden="true">
       {ridge.map((row) => (
-        <path d={row.d} class={row.amber ? 'ap-fill-amber' : 'ap-fill'} />
+        <path d={row.d} class={row.highlight ? 'ap-fill-highlight' : 'ap-fill'} />
       ))}
     </svg>
   )}
@@ -106,7 +106,7 @@ const field = area === 'CMP' ? vectorField() : null;
         <line
           x1={graph.nodes[e.a].x} y1={graph.nodes[e.a].y}
           x2={graph.nodes[e.b].x} y2={graph.nodes[e.b].y}
-          class={e.live ? 'ap-line-amber' : 'ap-line'}
+          class={e.live ? 'ap-line-highlight' : 'ap-line'}
         />
       ))}
       {graph.nodes.map((p, i) => (
@@ -135,12 +135,12 @@ const field = area === 'CMP' ? vectorField() : null;
   }
   .area-plate-art svg { width: 100%; height: 100%; display: block; }
   .ap-fill { fill: var(--hair-3); }
-  .ap-fill-amber { fill: var(--amber-hair); }
+  .ap-fill-highlight { fill: var(--accent-hair); }
   .ap-line { stroke: var(--ink-4); stroke-width: 1; }
-  .ap-line-amber { stroke: var(--amber-dim); stroke-width: 1.2; }
+  .ap-line-highlight { stroke: var(--accent-dim); stroke-width: 1.2; }
   .ap-line-dash { stroke: var(--ink-4); stroke-width: 1; stroke-dasharray: 2 6; }
   .ap-node { fill: var(--void); stroke: var(--ink-3); stroke-width: 1; }
-  .ap-node-open { fill: none; stroke: var(--amber-dim); stroke-width: 1.2; }
+  .ap-node-open { fill: none; stroke: var(--accent-dim); stroke-width: 1.2; }
   .ap-empty-label {
     fill: var(--ink-4);
     font-family: var(--mono);

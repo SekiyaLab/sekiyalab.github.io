@@ -2,7 +2,7 @@
 /* The opening mark. A phyllotaxis spiral — the golden-angle construction
    behind sunflower heads and pinecones — drawn once, at build time, as
    plain SVG. Real mathematics, no runtime cost, nothing that can fail to
-   a visitor without a GPU. One quiet amber arc marks a single turn of the
+   a visitor without a GPU. One quiet arc marks a single turn of the
    spiral so the eye has somewhere to land. */
 
 const N = 320;
@@ -41,5 +41,5 @@ const arc = arm
 <style>
   .hero-glyph { width: 100%; height: 100%; overflow: visible; }
   .hg-dot { fill: var(--ink-4); opacity: calc(0.16 + var(--d) * 0.5); }
-  .hg-arc { fill: none; stroke: var(--amber-dim); stroke-width: 1.4; }
+  .hg-arc { fill: none; stroke: var(--accent-dim); stroke-width: 1.4; }
 </style>
