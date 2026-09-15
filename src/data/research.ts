@@ -128,7 +128,7 @@ export const research: ResearchItem[] = [
     area: 'systems',
     kind: 'Instrument',
     access: 'Public',
-    href: 'https://github.com/SekiyaLab/trace-npm',
+    href: 'https://github.com/joshuadefreitas/trace-npm',
     summary: 'A close look at what an npm lifecycle script touches, spawns, and contacts.',
     signature: 'trace',
     date: '2026-08-21',
