@@ -105,7 +105,6 @@ export const research: ResearchItem[] = [
     signature: 'lob',
     date: '2026-08-02',
     slug: 'deep-lob',
-    related: ['trace-npm'],
   },
   {
     title: 'Spectral Recovery',
@@ -124,17 +123,6 @@ export const research: ResearchItem[] = [
     signature: 'tail',
   },
   {
-    title: 'trace-npm',
-    area: 'systems',
-    kind: 'Instrument',
-    access: 'Public',
-    href: 'https://github.com/joshuadefreitas/trace-npm',
-    summary: 'A close look at what an npm lifecycle script touches, spawns, and contacts.',
-    signature: 'trace',
-    date: '2026-08-21',
-    slug: 'trace-npm',
-  },
-  {
     title: 'Evidence that exists and cannot be retrieved',
     area: 'systems',
     kind: 'Finding',
@@ -144,7 +132,6 @@ export const research: ResearchItem[] = [
     signature: 'audit',
     date: '2026-08-17',
     slug: 'audit-retrieval',
-    related: ['trace-npm'],
     flagged: true,
   },
   {
