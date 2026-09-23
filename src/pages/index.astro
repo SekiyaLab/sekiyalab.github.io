@@ -1,213 +1,42 @@
 ---
-import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Mark from '../components/Mark.astro';
-import ResearchIndex from '../components/ResearchIndex.astro';
-import { areas, research } from '../data/research';
-
-const questions = (await getCollection('questions')).sort((a, b) => a.data.order - b.data.order);
-const [featuredQuestion, ...restQuestions] = questions;
-const countFor = (code: (typeof areas)[number]['code']) => research.filter((item) => item.area === code).length;
-
-/* the featured area: whichever currently carries the most public work */
-const areasByPublic = [...areas].sort(
-  (a, b) =>
-    research.filter((r) => r.area === b.code && r.access === 'Public').length -
-    research.filter((r) => r.area === a.code && r.access === 'Public').length,
-);
-const [featuredArea, ...otherAreas] = areasByPublic;
-const featuredAreaExample = research.find((r) => r.area === featuredArea.code && r.access === 'Public');
 ---
 
 <Base
-  title="Sekiya — systems worth looking at twice"
-  description="Sekiya is an independent place for computer science and computational experimentation."
-  objectCount={research.length}
+  title="Sekiya — empirical agent behavior"
+  description="Sekiya studies autonomous-agent behavior empirically and builds technology for understanding difficult systems."
 >
   <section class="home-hero" data-home-hero>
     <div class="home-hero__environment" aria-hidden="true">
       <span class="home-hero__plane home-hero__plane--deep"></span>
       <span class="home-hero__plane home-hero__plane--near"></span>
-      <svg class="home-hero__field home-hero__field--back" viewBox="0 0 1440 900" preserveAspectRatio="none">
-        <g class="field-plane field-plane--far">
-          <path d="M-120 622 C170 548 371 573 608 472 S1035 329 1560 248" />
-          <path d="M-80 214 C218 310 403 294 612 210 S1002 120 1490 154" />
-          <path d="M116 905 C230 708 438 604 681 589 S1110 644 1470 505" />
-        </g>
-        <g class="field-plane field-plane--mid">
-          <path d="M74 760 L322 556 L578 612 L850 420 L1178 466 L1468 300" />
-          <path d="M-30 430 L236 396 L468 474 L716 304 L970 330 L1284 190" />
-          <path d="M184 96 L408 250 L672 170 L910 246 L1190 112 L1514 140" />
-        </g>
-        <g class="field-nodes">
-          <circle cx="322" cy="556" r="2.4" />
-          <circle cx="578" cy="612" r="1.8" />
-          <circle cx="716" cy="304" r="2.2" />
-          <circle cx="970" cy="330" r="1.7" />
-          <circle cx="1178" cy="466" r="2.1" />
-          <circle cx="408" cy="250" r="1.5" />
-          <circle cx="1190" cy="112" r="1.7" />
-        </g>
-      </svg>
-      <svg class="home-hero__field home-hero__field--front" viewBox="0 0 1440 900" preserveAspectRatio="none">
-        <g class="field-plane field-plane--front">
-          <path d="M-160 676 C188 650 331 437 586 451 C872 467 941 703 1262 622 C1395 589 1486 505 1578 386" />
-          <path d="M42 346 C280 282 447 376 606 337 C782 294 869 152 1062 166 C1197 176 1323 254 1478 226" />
-        </g>
-        <g class="field-apertures">
-          <circle cx="586" cy="451" r="3" />
-          <circle cx="1062" cy="166" r="2.4" />
-        </g>
-      </svg>
+      <svg class="home-hero__field" viewBox="0 0 1440 900" preserveAspectRatio="none"><g class="field-plane field-plane--far"><path d="M-120 622 C170 548 371 573 608 472 S1035 329 1560 248"/><path d="M-80 214 C218 310 403 294 612 210 S1002 120 1490 154"/></g><g class="field-plane field-plane--front"><path d="M-160 676 C188 650 331 437 586 451 C872 467 941 703 1262 622 C1395 589 1486 505 1578 386"/></g></svg>
     </div>
     <div class="shell home-hero__body">
       <div class="home-hero__copy">
         <div class="hero-identity">
           <Mark size={112} variant="hero" decorative={true} />
-          <div>
-            <p class="hero-identity__name">Sekiya</p>
-            <p class="hero-identity__line">Independent computation</p>
-          </div>
+          <div><p class="hero-identity__name">Sekiya</p><p class="hero-identity__line">Independent research and technology</p></div>
         </div>
-        <h1>Look closer. Things are already <em>moving.</em></h1>
-        <p class="home-hero__lede">
-          Independent computer science and computational experimentation, published with
-          evidence clear enough to inspect and limits clear enough to trust.
-        </p>
-        <a class="home-hero__entry" href="#work">Enter the research index <span aria-hidden="true">↓</span></a>
+        <h1>Behavior is not a label. It is a question.</h1>
+        <p class="home-hero__lede">Sekiya studies how autonomous agents behave under controlled variation — individually, socially and institutionally — and builds technology for understanding difficult systems.</p>
+        <a class="home-hero__entry" href="/research/">Explore Research <span aria-hidden="true">→</span></a>
       </div>
     </div>
   </section>
 
-  <section class="ruled-section shell work-arrival" id="work" aria-label="Research index">
-    <ResearchIndex />
+  <section class="ruled-section shell" aria-labelledby="method">
+    <div class="section-rail"><p class="eyebrow">Method</p><h2 id="method">Ask the explanation to survive contact with evidence.</h2></div>
+    <div class="section-content"><p class="section-intro">Access does not prove comprehension. A false report does not establish deception. Coordinated behavior does not establish collusion. Sekiya uses controlled variation, intervention and replication where justified to distinguish competing explanations.</p></div>
   </section>
 
-  <section class="ruled-section shell" id="areas" aria-labelledby="areas-heading">
-    <div class="section-rail">
-      <p class="eyebrow">Ways in</p>
-      <h2 id="areas-heading">Four frequencies. No departments.</h2>
-      <p class="section-intro">Different ways of following a system until it starts saying something interesting.</p>
-    </div>
-    <div class="section-content">
-      <div class="area-grid">
-        <article class="area-card area-card--featured">
-          <div class="area-card__top">
-            <span>{featuredArea.short}</span>
-            <span>{countFor(featuredArea.code)} named</span>
-          </div>
-          <h3>{featuredArea.label}</h3>
-          <p>{featuredArea.description}</p>
-          {featuredAreaExample && (
-            <p class="area-card__example">Currently: <strong>{featuredAreaExample.title}</strong> — {featuredAreaExample.summary}</p>
-          )}
-          <a href="#work" data-area-link={featuredArea.code}>Tune in <span aria-hidden="true">↓</span></a>
-        </article>
-        <div class="area-list">
-          {otherAreas.map((area) => (
-            <article class:list={['area-card', `area-card--${area.code}`]}>
-              <div class="area-card__top">
-                <span>{area.short}</span>
-                <span>{countFor(area.code)} named</span>
-              </div>
-              <h3>{area.label}</h3>
-              <p>{area.description}</p>
-              <a href="#work" data-area-link={area.code}>Tune in <span aria-hidden="true">↓</span></a>
-            </article>
-          ))}
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="ruled-section shell home-section--tint" id="questions" aria-labelledby="questions-heading">
-    <div class="section-rail">
-      <p class="eyebrow">Open questions</p>
-      <h2 id="questions-heading">Still being worked out.</h2>
-    </div>
-    <div class="section-content">
-      {featuredQuestion && (
-        <a class="question-feature" href={`/q/${featuredQuestion.id}/`}>
-          <span class="question-feature__number">01</span>
-          <span class="question-feature__text">{featuredQuestion.data.question}</span>
-          <span class="question-feature__lead">{featuredQuestion.data.lead}</span>
-        </a>
-      )}
-      <ol class="question-strip" start="2">
-        {restQuestions.map((question, index) => (
-          <li>
-            <a href={`/q/${question.id}/`}>
-              <span class="question-strip__number">{String(index + 2).padStart(2, '0')}</span>
-              <span>{question.data.question}</span>
-              <span aria-hidden="true">→</span>
-            </a>
-          </li>
-        ))}
-      </ol>
-    </div>
-  </section>
-
-  <section class="ruled-section shell" aria-label="Explore Sekiya">
-    <div class="section-rail">
-      <p class="eyebrow">Elsewhere</p>
-      <h2>More from Sekiya</h2>
-    </div>
+  <section class="ruled-section shell home-section--tint" aria-labelledby="programmes">
+    <div class="section-rail"><p class="eyebrow">Programmes</p><h2 id="programmes">Research and Technology.</h2></div>
     <div class="section-content home-outro__links">
-      <a href="/academy/">Enter the Academy <span aria-hidden="true">→</span></a>
-      <a href="/journal/">Notes &amp; transmissions <span aria-hidden="true">→</span></a>
-      <a href="https://github.com/SekiyaLab" target="_blank" rel="noreferrer">SekiyaLab on GitHub <span aria-hidden="true">↗</span></a>
+      <a href="/research/">Research — the current programme and Research Record <span aria-hidden="true">→</span></a>
+      <a href="/technology/">Technology — instruments and products, when earned <span aria-hidden="true">→</span></a>
+      <a href="/institute/">About Sekiya's boundaries and method <span aria-hidden="true">→</span></a>
     </div>
   </section>
 </Base>
-
-<script>
-  const bootHomeHero = () => {
-    document.querySelectorAll<HTMLElement>('[data-home-hero]').forEach((hero) => {
-      if (hero.dataset.heroReady) return;
-      hero.dataset.heroReady = 'true';
-
-      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-      const reset = () => {
-        hero.style.setProperty('--hero-shift-x', '0px');
-        hero.style.setProperty('--hero-shift-y', '0px');
-        hero.style.setProperty('--hero-light-x', '58%');
-        hero.style.setProperty('--hero-light-y', '36%');
-      };
-      const move = (event: PointerEvent) => {
-        if (reduced.matches) return;
-        const rect = hero.getBoundingClientRect();
-        const x = (event.clientX - rect.left) / rect.width;
-        const y = (event.clientY - rect.top) / rect.height;
-        hero.style.setProperty('--hero-shift-x', `${(x - 0.5) * -18}px`);
-        hero.style.setProperty('--hero-shift-y', `${(y - 0.5) * -12}px`);
-        hero.style.setProperty('--hero-light-x', `${x * 100}%`);
-        hero.style.setProperty('--hero-light-y', `${y * 100}%`);
-      };
-
-      reset();
-      hero.addEventListener('pointermove', move);
-      hero.addEventListener('pointerleave', reset);
-      document.addEventListener('astro:before-swap', () => {
-        hero.removeEventListener('pointermove', move);
-        hero.removeEventListener('pointerleave', reset);
-      }, { once: true });
-    });
-  };
-
-  const bootAreaLinks = () => {
-    document.querySelectorAll<HTMLAnchorElement>('[data-area-link]').forEach((link) => {
-      if (link.dataset.ready) return;
-      link.dataset.ready = 'true';
-      link.addEventListener('click', () => {
-        const target = link.dataset.areaLink;
-        const button = document.querySelector<HTMLButtonElement>(`[data-research-filter="${target}"]`);
-        button?.click();
-      });
-    });
-  };
-
-  bootHomeHero();
-  bootAreaLinks();
-  document.addEventListener('astro:page-load', bootHomeHero);
-  document.addEventListener('astro:page-load', bootAreaLinks);
-</script>
