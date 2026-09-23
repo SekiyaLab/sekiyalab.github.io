@@ -3,7 +3,7 @@ import 'katex/dist/katex.min.css';
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Limits from '../../components/Limits.astro';
-import { TYPE_PREFIX, PREFIX_TYPE, AREA_LABEL } from '../../content.config';
+import { TYPE_PREFIX, PREFIX_TYPE } from '../../content.config';
 
 export async function getStaticPaths() {
   const objects = await getCollection('objects', ({ data }) => !data.draft);
@@ -46,7 +46,6 @@ const related = (entry.data.related ?? [])
       <div class="object-kicker">
         <span class="o-no">{entry.data.number}</span>
         <span>{entry.data.type}</span>
-        <span>{AREA_LABEL[entry.data.area]}</span>
       </div>
       <h1 class="object-title">{entry.data.title}</h1>
       {entry.data.question && <p class="object-question">{entry.data.question}</p>}
@@ -98,7 +97,7 @@ const related = (entry.data.related ?? [])
         }
 
         <div class="repro">
-          {entry.data.number} · {entry.data.type} · {AREA_LABEL[entry.data.area]} · first published {fmt(entry.data.date)}
+          {entry.data.number} · {entry.data.type} · first published {fmt(entry.data.date)}
           {entry.data.origin && ` · origin: ${entry.data.origin}`}
           {entry.data.repo && (
             <>

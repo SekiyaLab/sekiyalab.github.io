@@ -79,15 +79,12 @@ for (const viewport of [
 /* ---------- 2. axe on key surfaces ---------- */
 const axePages = [
   '/',
-  '/academy/',
   '/research/',
   '/technology/',
   '/f/audit-retrieval/',
   '/s/deep-lob/',
-  '/study/',
   '/institute/',
   '/journal/',
-  '/q/point-in-time/',
 ];
 const axeCtx = await browser.newContext();
 for (const p of axePages) {

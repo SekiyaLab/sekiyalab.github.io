@@ -1,7 +1,6 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
-const AREA = z.enum(['M&S', 'S&S', 'AGT', 'CMP']);
 const TYPE = z.enum(['study', 'finding', 'instrument', 'note']);
 
 const objects = defineCollection({
@@ -10,7 +9,6 @@ const objects = defineCollection({
     title: z.string(),
     number: z.string(),
     type: TYPE,
-    area: AREA,
     date: z.coerce.date(),
     summary: z.string(),
     question: z.string().optional(),
@@ -31,7 +29,6 @@ const questions = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/questions' }),
   schema: z.object({
     question: z.string(),
-    areas: z.array(AREA),
     date: z.coerce.date(),
     lead: z.string(),
     order: z.number().default(99),
@@ -54,10 +51,3 @@ export const TYPE_PREFIX: Record<string, string> = {
 export const PREFIX_TYPE: Record<string, string> = Object.fromEntries(
   Object.entries(TYPE_PREFIX).map(([t, p]) => [p, t]),
 );
-
-export const AREA_LABEL: Record<string, string> = {
-  'M&S': 'Models & Statistics',
-  'S&S': 'Systems & Security',
-  AGT: 'Agentic Systems',
-  CMP: 'Computation',
-};

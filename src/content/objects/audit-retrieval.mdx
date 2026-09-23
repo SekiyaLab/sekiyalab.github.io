@@ -2,7 +2,6 @@
 title: Evidence that exists and cannot be retrieved
 number: R-002
 type: finding
-area: S&S
 date: 2026-08-17
 status: accepted
 question: When does a tool's silence stop meaning absence?
@@ -10,8 +9,6 @@ summary: A successful empty audit query did not establish an empty record — 19
 limits:
   - Established on one Fedora 44 guest, kernel 6.19.10 aarch64, under virtualisation; not established for x86-64 or bare metal.
   - Speaks to ausearch's retrieval semantics, not to auditd's collection reliability.
-related:
-  - trace-npm
 ---
 
 import Numerals from '../../components/Numerals.astro';
