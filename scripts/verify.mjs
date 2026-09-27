@@ -79,16 +79,12 @@ for (const viewport of [
 /* ---------- 2. axe on key surfaces ---------- */
 const axePages = [
   '/',
-  '/academy/',
-  '/academy/gpu-command-journey/',
-  '/academy/ping-pong-buffers/',
+  '/research/',
+  '/technology/',
   '/f/audit-retrieval/',
   '/s/deep-lob/',
-  '/i/trace-npm/',
-  '/study/',
   '/institute/',
   '/journal/',
-  '/q/npm-install/',
 ];
 const axeCtx = await browser.newContext();
 for (const p of axePages) {
@@ -151,18 +147,18 @@ for (const p of axePages) {
 /* ---------- 4. keyboard: the work index filter is operable ---------- */
 {
   const page = await browser.newPage();
-  await page.goto(base + '/', { waitUntil: 'networkidle' });
-  await page.waitForSelector('[data-research-filter="models"]');
-  await page.focus('[data-research-filter="models"]');
+  await page.goto(base + '/research/', { waitUntil: 'networkidle' });
+  await page.waitForSelector('[data-research-filter="record"]');
+  await page.focus('[data-research-filter="record"]');
   await page.keyboard.press('Enter');
   await page.waitForTimeout(200);
-  const pressed = await page.getAttribute('[data-research-filter="models"]', 'aria-pressed');
+  const pressed = await page.getAttribute('[data-research-filter="record"]', 'aria-pressed');
   const visible = await page.locator('[data-work-area]:not([hidden])').count();
-  const nonModelsVisible = await page.locator('[data-work-area]:not([hidden]):not([data-work-area="models"])').count();
-  if (pressed === 'true' && visible > 0 && nonModelsVisible === 0) {
+  const nonRecordVisible = await page.locator('[data-work-area]:not([hidden]):not([data-work-area="record"])').count();
+  if (pressed === 'true' && visible > 0 && nonRecordVisible === 0) {
     pass('keyboard filter — work index filters to the selected area');
   } else {
-    fail(`keyboard filter — pressed=${pressed}, visible=${visible}, non-models=${nonModelsVisible}`);
+    fail(`keyboard filter — pressed=${pressed}, visible=${visible}, non-record=${nonRecordVisible}`);
   }
   await page.close();
 }
@@ -170,10 +166,10 @@ for (const p of axePages) {
 /* ---------- 5. public/private boundary: private work is named, never linked ---------- */
 {
   const page = await browser.newPage();
-  await page.goto(base + '/', { waitUntil: 'networkidle' });
+  await page.goto(base + '/research/', { waitUntil: 'networkidle' });
   const nonPublicLinks = await page.locator('[data-work-area]:has(.access-tag:not(.is-public)) a').count();
   const named = await page.locator('[data-work-area]').count();
-  if (nonPublicLinks === 0 && named >= 14) pass(`work index — ${named} named entries; non-public entries are not linked`);
+  if (nonPublicLinks === 0 && named >= 9) pass(`work index — ${named} named entries; non-public entries are not linked`);
   else fail(`work index — non-public links=${nonPublicLinks}, named=${named}`);
   await page.close();
 }
@@ -250,9 +246,7 @@ for (const p of axePages) {
     };
     return [
       ['hero lede', '.home-hero__lede'],
-      ['section intro', '.section-rail .section-intro'],
-      ['work row body', '.work-row p'],
-      ['filter', '.research-filter'],
+      ['section intro', '.section-intro'],
       ['hero entry', '.home-hero__entry'],
     ].map(([name, selector]) => {
       const el = document.querySelector(selector);

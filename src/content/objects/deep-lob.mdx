@@ -2,18 +2,14 @@
 title: When overlapping windows invent predictability
 number: SK-S-01
 type: study
-area: M&S
 date: 2026-08-02
 status: accepted
-origin: Portfolio
 question: Can a model look predictive when the signal is fake?
 summary: A DeepLOB-style market model trained on overlapping windows scored "predictive" on null data — until the evaluation boundary was purged.
 repo: https://github.com/SekiyaLab/deep-lob
 limits:
   - Does not establish tradability, profit, or a real market signal.
   - Shows how a flawed test can manufacture confidence on synthetic null data.
-related:
-  - trace-npm
 ---
 
 import Numerals from '../../components/Numerals.astro';
