@@ -15,12 +15,15 @@ export type ResearchItem = {
 };
 
 export const areas = [
-  { code: 'programme' as const, label: 'Current programme', short: 'NOW', description: 'Autonomous-agent behavior under controlled variation; its full scientific architecture remains open.' },
+  { code: 'programme' as const, label: 'Current programmes', short: 'NOW', description: 'Four scoped, non-executing programmes for autonomous-agent behavior under controlled variation.' },
   { code: 'record' as const, label: 'Research Record', short: 'RECORD', description: 'Earlier studies preserved under their original questions, evidence and lifecycle.' },
 ];
 
 export const research: ResearchItem[] = [
-  { title: 'Autonomous-agent behavior', area: 'programme', kind: 'Programme', access: 'Open shelf', summary: 'A current scientific direction, not an established body of agent-behavior results.', signature: 'agentic' },
+  { title: 'Agent Behaviour & Emergence', area: 'programme', kind: 'Programme', access: 'Open shelf', summary: 'How observable agent behavior changes as conditions, feedback, memory, information and repeated interaction vary.', signature: 'agentic' },
+  { title: 'Agentic Systems & Engineering', area: 'programme', kind: 'Programme', access: 'Open shelf', summary: 'What behavior belongs to a model and what belongs to its tools, authority, memory, orchestration and recovery system.', signature: 'agentic' },
+  { title: 'Evaluation & Measurement', area: 'programme', kind: 'Programme', access: 'Open shelf', summary: 'How behavioral measures earn reliability, validity, comparability and stated limits.', signature: 'agentic' },
+  { title: 'Multi-Agent & Human-Agent Systems', area: 'programme', kind: 'Programme', access: 'Open shelf', summary: 'How roles, communication, authority and institutions shape collective and human-agent behavior.', signature: 'agentic' },
   { title: 'Clock Dataset', area: 'record', kind: 'Study', access: 'Public', href: 'https://github.com/SekiyaLab/clock-dataset', summary: 'What was actually knowable at the moment of a decision?', signature: 'clock' },
   { title: 'Decision Assurance', area: 'record', kind: 'Study', access: 'Public', href: 'https://github.com/SekiyaLab/decision-assurance', summary: 'When does a score stop being enough for a finite-capacity decision?', signature: 'assurance' },
   { title: 'Degradation Diagnosis', area: 'record', kind: 'Study', access: 'Public', href: 'https://github.com/SekiyaLab/degradation-diagnosis', summary: 'How much can a model’s trouble be diagnosed before its labels arrive?', signature: 'diagnosis' },
